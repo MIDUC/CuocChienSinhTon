@@ -14,7 +14,7 @@
       "level": 1,
       "stats": {
         "hpPct": 8,
-        "respawnPct": 5
+        "trainTimePct": 5
       },
       "cost": {
         "gold": 500,
@@ -27,7 +27,7 @@
       "level": 2,
       "stats": {
         "hpPct": 16,
-        "respawnPct": 10
+        "trainTimePct": 10
       },
       "cost": {
         "gold": 2000,
@@ -40,7 +40,7 @@
       "level": 3,
       "stats": {
         "hpPct": 24,
-        "respawnPct": 15
+        "trainTimePct": 15
       },
       "cost": {
         "gold": 4500,

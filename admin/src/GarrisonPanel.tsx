@@ -87,6 +87,19 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
   };
   const artifacts = all.filter((e) => e.type === 'artifact');
 
+  // ---- tạo lại lính ----
+  const resources = all.filter((e) => e.type === 'resource').map((e) => ({ key: e.key, name: e.name }));
+  const setTrainCost = (li: number, k: string, raw: string) =>
+    setLevels(
+      draft.levels.map((l, i) => {
+        if (i !== li) return l;
+        const tc = { ...(l.trainCost ?? {}) };
+        if (raw === '' || Number(raw) === 0) delete tc[k];
+        else tc[k] = Number(raw);
+        return { ...l, trainCost: tc };
+      }),
+    );
+
   // ---- chỉ số lính ghi ở nhà ----
   const troopKeys = useMemo(() => {
     const keys = troopStatDefs.map((d) => d.key);
@@ -143,7 +156,7 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
       </div>
       <p className="muted">
         Lính đứng chờ quanh nhà theo đội hình bên dưới. Khi quái đi vào <b>vùng bao phủ</b> (chỉ số “Bán kính bao phủ”), lính chạy ra
-        đánh; lính chết sẽ hồi sinh sau “Hồi sinh lính (giây)”. <b>Chỉ số của lính ghi ngay tại nhà này</b> theo từng cấp nhà (bảng
+        đánh. <b>Lính chết là mất</b>, không tự hồi sinh: người chơi phải trả tài nguyên để tạo lại lính tại nhà (bảng “Tạo lại lính”). <b>Chỉ số của lính ghi ngay tại nhà này</b> theo từng cấp nhà (bảng
         “Chỉ số lính”); ảnh lính lấy từ mục Lính / Tướng theo “Cấp của lính”.
       </p>
 
@@ -248,6 +261,51 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
           </tbody>
         </table>
       </div>
+
+      <h3>Tạo lại lính (khi lính chết)</h3>
+      <div className="table-wrap">
+        <table className="statgrid-lite">
+          <thead>
+            <tr>
+              <th>Cấp nhà</th>
+              <th>Thời gian tạo 1 lính (giây)</th>
+              <th>Tạo cùng lúc</th>
+              {resources.map((r) => (
+                <th key={r.key}>{r.name}</th>
+              ))}
+              <th>Tạo đủ cả đội</th>
+            </tr>
+          </thead>
+          <tbody>
+            {draft.levels.map((l, i) => {
+              const n = l.stats.troopCount ?? 0;
+              const q = Math.max(1, l.stats.trainQueue ?? 1);
+              const t = l.stats.trainTimeSec ?? 0;
+              const full = Object.entries(l.trainCost ?? {})
+                .filter(([, v]) => v)
+                .map(([k, v]) => `${v * n} ${resources.find((r) => r.key === k)?.name ?? k}`)
+                .join(', ');
+              return (
+                <tr key={i}>
+                  <th>Cấp {l.level}</th>
+                  <td><input type="number" min="0" value={l.stats.trainTimeSec ?? ''} onChange={(e) => setStat(i, 'trainTimeSec', e.target.value === '' ? null : Number(e.target.value))} /></td>
+                  <td><input type="number" min="1" value={l.stats.trainQueue ?? ''} onChange={(e) => setStat(i, 'trainQueue', e.target.value === '' ? null : Number(e.target.value))} /></td>
+                  {resources.map((r) => (
+                    <td key={r.key}>
+                      <input type="number" min="0" value={l.trainCost?.[r.key] ?? ''} onChange={(e) => setTrainCost(i, r.key, e.target.value)} />
+                    </td>
+                  ))}
+                  <td className="muted small-cell">
+                    {n} lính · {fmtTime(Math.ceil(n / q) * t)}
+                    {full && <div>{full}</div>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <small className="muted">Chi phí và thời gian tính cho 1 lính. Cột cuối là tổng khi phải tạo lại cả đội ở cấp đó.</small>
 
       <div className="section-head" style={{ marginTop: 16 }}>
         <h3 style={{ margin: 0 }}>Chỉ số lính theo cấp nhà</h3>
@@ -565,4 +623,11 @@ function FormationPreview(p: {
       </div>
     </div>
   );
+}
+
+function fmtTime(sec: number) {
+  if (!sec) return '0 giây';
+  const m = Math.floor(sec / 60);
+  const r = sec % 60;
+  return m ? `${m} phút${r ? ` ${r} giây` : ''}` : `${r} giây`;
 }

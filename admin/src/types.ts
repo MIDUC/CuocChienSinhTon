@@ -13,6 +13,7 @@ export interface LevelData {
   cost: Record<string, number>;
   rewards?: Reward[];
   troopStats?: Record<string, number>;
+  trainCost?: Record<string, number>;
   image: string | null;
   artNote: string;
 }

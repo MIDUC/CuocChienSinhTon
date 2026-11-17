@@ -28,10 +28,11 @@
         "hp": 700,
         "coverRadius": 4,
         "troopCount": 1,
-        "respawnSec": 22,
         "buildTimeSec": 40,
         "troopLevel": 1,
-        "statPoints": 0
+        "statPoints": 0,
+        "trainTimeSec": 20,
+        "trainQueue": 2
       },
       "cost": {
         "gold": 200,
@@ -46,6 +47,10 @@
         "attackRange": 4,
         "attackSpeed": 0.9,
         "moveSpeed": 1.6
+      },
+      "trainCost": {
+        "gold": 40,
+        "food": 30
       }
     },
     {
@@ -54,10 +59,11 @@
         "hp": 1400,
         "coverRadius": 5,
         "troopCount": 3,
-        "respawnSec": 19,
         "buildTimeSec": 80,
         "troopLevel": 2,
-        "statPoints": 4
+        "statPoints": 4,
+        "trainTimeSec": 30,
+        "trainQueue": 3
       },
       "cost": {
         "gold": 800,
@@ -72,6 +78,10 @@
         "attackRange": 4,
         "attackSpeed": 0.9,
         "moveSpeed": 1.6
+      },
+      "trainCost": {
+        "gold": 80,
+        "food": 60
       }
     },
     {
@@ -80,10 +90,11 @@
         "hp": 2100,
         "coverRadius": 5,
         "troopCount": 6,
-        "respawnSec": 16,
         "buildTimeSec": 120,
         "troopLevel": 3,
-        "statPoints": 5
+        "statPoints": 5,
+        "trainTimeSec": 40,
+        "trainQueue": 4
       },
       "cost": {
         "gold": 1800,
@@ -98,6 +109,10 @@
         "attackRange": 4,
         "attackSpeed": 0.9,
         "moveSpeed": 1.6
+      },
+      "trainCost": {
+        "gold": 120,
+        "food": 90
       }
     }
   ]

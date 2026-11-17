@@ -25,6 +25,8 @@ export interface LevelData {
   rewards?: Reward[];
   /** Chỉ số của lính do nhà này sinh ra, ở cấp nhà này (nhà lính / nhà tướng). Ghi đè chỉ số trong mục Lính. */
   troopStats?: Record<string, number>;
+  /** Chi phí tạo lại 1 lính ở cấp nhà này (lính chết là mất, không tự hồi sinh), theo key tài nguyên */
+  trainCost?: Record<string, number>;
   /** Đường dẫn ảnh đã upload (ví dụ /assets/building/barracks/lv1-1700000000.png). null = dùng ảnh placeholder */
   image: string | null;
   /** Mô tả ngoại hình riêng của cấp này (tiếng Anh) để ghép vào prompt vẽ ảnh */
@@ -82,7 +84,8 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'troopCount', label: 'Số lính tối đa', hint: 'Nhà lính: số lính đứng quanh nhà (vd 1, 3, 6, 9, 16)' },
       { key: 'statPoints', label: 'Điểm cộng nhận khi lên cấp này', hint: 'Người chơi tự phân bổ vào chỉ số lính' },
       { key: 'troopLevel', label: 'Cấp của lính', hint: 'Lính sinh ra ở cấp này (lấy chỉ số + ảnh của cấp đó)' },
-      { key: 'respawnSec', label: 'Hồi sinh lính (giây)' },
+      { key: 'trainTimeSec', label: 'Thời gian tạo 1 lính (giây)', hint: 'Lính chết là mất; người chơi trả tài nguyên để tạo lại' },
+      { key: 'trainQueue', label: 'Số lính tạo cùng lúc' },
       { key: 'damage', label: 'Sát thương' },
       { key: 'attackRange', label: 'Tầm bắn (ô)' },
       { key: 'attackSpeed', label: 'Tốc độ đánh (lần/giây)' },
@@ -266,7 +269,8 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'attackSpeedPct', label: 'Tốc độ đánh +%' },
       { key: 'moveSpeedPct', label: 'Tốc độ chạy +%' },
       { key: 'attackRange', label: 'Tầm đánh + (ô)' },
-      { key: 'respawnPct', label: 'Giảm thời gian hồi sinh %' },
+      { key: 'trainTimePct', label: 'Giảm thời gian tạo lính %' },
+      { key: 'trainCostPct', label: 'Giảm chi phí tạo lính %' },
     ],
     props: [
       { key: 'rarity', label: 'Độ hiếm', hint: 'common | rare | epic | legendary' },
@@ -309,6 +313,7 @@ export function normalizeEntity(raw: any, forcedType?: EntityTypeKey): EntityDat
         artNote: String(l?.artNote ?? ''),
       };
       if (l?.troopStats && typeof l.troopStats === 'object') lv.troopStats = numMap(l.troopStats);
+      if (l?.trainCost && typeof l.trainCost === 'object') lv.trainCost = numMap(l.trainCost);
       if (TYPE_DEFS[type as EntityTypeKey].hasRewards) {
         lv.rewards = (Array.isArray(l?.rewards) ? l.rewards : []).map((r: any) => ({
           item: String(r?.item ?? ''),

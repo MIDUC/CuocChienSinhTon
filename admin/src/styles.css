@@ -224,3 +224,4 @@ label.check input { width: auto; }
 .slot-col select { width: 78px; padding: 2px 4px; font-size: 12px; }
 .slot-col select.warn, .warn-text { color: var(--danger); }
 .slot.locked { border-style: solid; border-color: var(--line); opacity: 0.7; font-size: 20px; }
+.small-cell { font-size: 12px; white-space: nowrap; }

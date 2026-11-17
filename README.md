@@ -47,7 +47,7 @@ Bản build: `npm run build` rồi `npm start -w server` — server phục vụ 
 - **Lính đóng quân** (nhà lính, trường bắn, nhà tướng…): chọn loại lính, số lính tối đa theo cấp nhà (chọn nhanh 1/3/6/9/16), cấp của lính, đội hình đứng chờ (vây quanh / xếp khối), cách ra đánh khi quái vào vùng bao phủ, xem trước đội hình trên lưới isometric. Thuật toán xếp chỗ đứng ở `admin/src/formation.ts` để game dùng lại.
   - Chỉ số lính ghi ngay trên nhà, theo từng cấp nhà (`levels[].troopStats`); ô trống thì dùng chỉ số trong mục Lính.
   - Điểm đóng quân: bật/tắt cho người chơi chọn (`rallySelectable`), điểm mặc định (`rallyX`, `rallyY`, tính bằng ô so với tâm nhà). Người chơi chỉ được đặt trong vùng bao phủ (`coverRadius`).
-  - Cổ vật: số ô trang bị (`artifactSlots`, mặc định 5). Điểm cộng khi lên cấp (`levels[].stats.statPoints`) và giá trị mỗi điểm cho từng chỉ số được phép cộng (`statPointValues`, ví dụ `hp:20,damage:3`).
+  - Cổ vật: số ô trang bị 1–10 (`artifactSlots`), cấp nhà mở từng ô (`artifactSlotUnlocks`, ví dụ `2,4,5,7,8`; cấp 1 chưa mở ô nào nếu không có số 1). Điểm cộng khi lên cấp (`levels[].stats.statPoints`) và giá trị mỗi điểm cho từng chỉ số được phép cộng (`statPointValues`, ví dụ `hp:20,damage:3`).
 - **Cổ vật**: ảnh, cấp, prompt, chỉ số cộng thêm cho lính (số thường = cộng thẳng, đuôi `Pct` = cộng %), áp dụng cho loại lính nào.
 - **Ảnh theo cấp**: upload / thay / xoá (kéo thả được). Chưa có ảnh thì dùng ảnh SVG isometric tạm.
 - **Prompt vẽ ảnh** cho từng cấp (bản chung cho Leonardo / Stable Diffusion / ChatGPT, bản Midjourney, negative prompt) kèm kích thước ảnh đề xuất, nút Copy. Phong cách chung sửa ở trang *Phong cách & prompt chung*.

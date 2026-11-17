@@ -4,7 +4,7 @@ import { clampRally, garrisonSpots } from './formation';
 import type { EntityData, EntitySummary, EntityView, FieldDef, LevelData } from './types';
 
 /** Các thuộc tính cố định do khung này quản lý (ẩn khỏi bảng thuộc tính chung) */
-export const GARRISON_PROPS = ['spawns', 'garrisonFormation', 'garrisonSpacing', 'engageMode', 'chaseRadius', 'returnWhenClear', 'rallySelectable', 'rallyX', 'rallyY', 'artifactSlots', 'statPointValues'];
+export const GARRISON_PROPS = ['spawns', 'garrisonFormation', 'garrisonSpacing', 'engageMode', 'chaseRadius', 'returnWhenClear', 'rallySelectable', 'rallyX', 'rallyY', 'artifactSlots', 'artifactSlotUnlocks', 'statPointValues'];
 
 function parsePointValues(s: string): Record<string, number> {
   const out: Record<string, number> = {};
@@ -60,7 +60,24 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
   };
 
   // ---- cổ vật & điểm cộng ----
-  const slots = Number(draft.props.artifactSlots ?? 5) || 0;
+  const slots = Math.max(1, Math.min(10, Number(draft.props.artifactSlots ?? 5) || 1));
+  const maxLevel = draft.levels.length;
+  // cấp nhà mở từng ô, ví dụ "2,4,5,7,8"; thiếu thì mặc định mở ở cấp cuối
+  const parsedUnlocks = String(draft.props.artifactSlotUnlocks ?? '')
+    .split(',')
+    .map((x) => parseInt(x, 10))
+    .filter((n) => Number.isFinite(n) && n > 0);
+  const unlocks = Array.from({ length: slots }, (_, i) => parsedUnlocks[i] ?? Math.max(1, maxLevel));
+  const setSlots = (n: number) => {
+    const c = Math.max(1, Math.min(10, Math.round(n) || 1));
+    const u = Array.from({ length: c }, (_, i) => unlocks[i] ?? unlocks[unlocks.length - 1] ?? maxLevel);
+    setProps({ ...draft.props, artifactSlots: c, artifactSlotUnlocks: u.join(',') });
+  };
+  const setUnlock = (i: number, lvl: number) => {
+    const u = unlocks.map((x, j) => (j === i ? lvl : x));
+    prop('artifactSlotUnlocks', u.join(','));
+  };
+  const openAt = (lvl: number) => unlocks.filter((u) => u <= lvl).length;
   const pointValues = parsePointValues(String(draft.props.statPointValues ?? ''));
   const setPointValue = (k: string, v: number | null) => {
     const m = { ...pointValues };
@@ -288,17 +305,33 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
       <div className="artifact-row">
         <label className="inline">
           Số ô cổ vật
-          <input type="number" min="0" max="12" value={slots} onChange={(e) => prop('artifactSlots', Number(e.target.value))} style={{ width: 70 }} />
+          <select value={slots} onChange={(e) => setSlots(Number(e.target.value))} style={{ width: 70 }}>
+            {Array.from({ length: 10 }, (_, i) => (
+              <option key={i} value={i + 1}>{i + 1}</option>
+            ))}
+          </select>
         </label>
         <div className="slots">
-          {Array.from({ length: Math.min(slots, 12) }, (_, i) => (
-            <div key={i} className="slot checker" title={`Ô ${i + 1}`}>
-              {artifacts[i] && <img src={artifacts[i].image ?? artifacts[i].placeholder} alt="" />}
-            </div>
-          ))}
+          {unlocks.map((u, i) => {
+            const open = u <= (draft.levels[Math.min(previewLevel, maxLevel) - 1]?.level ?? 1);
+            return (
+              <div key={i} className="slot-col">
+                <div className={`slot checker ${open ? '' : 'locked'}`} title={`Ô ${i + 1}`}>
+                  {open ? artifacts[i % Math.max(1, artifacts.length)] && <img src={artifacts[i % artifacts.length].image ?? artifacts[i % artifacts.length].placeholder} alt="" /> : <span>🔒</span>}
+                </div>
+                <select className={u > maxLevel ? 'warn' : ''} value={u} onChange={(e) => setUnlock(i, Number(e.target.value))} title="Mở ở cấp nhà">
+                  {Array.from({ length: Math.max(maxLevel, u, 10) }, (_, k) => (
+                    <option key={k} value={k + 1}>Cấp {k + 1}</option>
+                  ))}
+                </select>
+              </div>
+            );
+          })}
         </div>
         <small className="muted">
-          Ảnh trong ô chỉ là ví dụ. Có {artifacts.length} cổ vật, sửa ở mục <a href="#/artifact">Cổ vật</a>.
+          Mỗi ô chọn cấp nhà mở khoá ô đó. Ô hiển thị theo cấp đang xem trước (Cấp {Math.min(previewLevel, maxLevel)}): 🔒 = chưa mở.
+          {unlocks.some((u) => u > maxLevel) && <b className="warn-text"> Có ô mở ở cấp lớn hơn cấp tối đa hiện tại ({maxLevel}) — thêm cấp cho nhà hoặc sửa lại.</b>}{' '}
+          Ảnh trong ô chỉ là ví dụ, sửa cổ vật ở mục <a href="#/artifact">Cổ vật</a>.
         </small>
       </div>
       <div className="points-grid">
@@ -338,6 +371,7 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
                 <th>Cấp nhà</th>
                 <th>Điểm nhận khi lên cấp</th>
                 <th>Tổng điểm</th>
+                <th>Ô cổ vật đã mở</th>
               </tr>
             </thead>
             <tbody>
@@ -350,6 +384,9 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
                       <input type="number" min="0" value={l.stats.statPoints ?? ''} onChange={(e) => setStat(i, 'statPoints', e.target.value === '' ? null : Number(e.target.value))} />
                     </td>
                     <td>{total}</td>
+                    <td>
+                      {openAt(l.level)} / {slots}
+                    </td>
                   </tr>
                 );
               })}

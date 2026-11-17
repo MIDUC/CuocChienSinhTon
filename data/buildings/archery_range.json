@@ -17,8 +17,9 @@
     "rallySelectable": true,
     "rallyX": 0,
     "rallyY": 0,
-    "artifactSlots": 5,
-    "statPointValues": "hp:12,damage:4,attackRange:0.1,attackSpeed:0.02"
+    "artifactSlots": 2,
+    "statPointValues": "hp:12,damage:4,attackRange:0.1,attackSpeed:0.02",
+    "artifactSlotUnlocks": "2,3"
   },
   "levels": [
     {

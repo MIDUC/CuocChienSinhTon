@@ -6,7 +6,12 @@
   "artSubject": "a lumber mill with stacked logs, a saw table and a few pine trees",
   "props": {
     "category": "economy",
-    "size": 2,
+    "footprintW": 2,
+    "footprintH": 2,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": false,
     "produces": "wood",
     "maxCount": 4
   },

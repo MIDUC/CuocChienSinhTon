@@ -6,6 +6,7 @@
   "artSubject": "a small green goblin with a rusty dagger",
   "props": {
     "role": "melee",
+    "pathMode": "avoid",
     "target": "nearest",
     "size": 1
   },

@@ -6,6 +6,7 @@
   "artSubject": "a heroic elf-like archer general with an ornate bow and green hooded cloak",
   "props": {
     "unitClass": "general",
+    "canClimbWalls": true,
     "role": "ranged",
     "skill": "Mưa Tên — bắn mưa tên lên một vùng",
     "size": 1,
@@ -23,7 +24,9 @@
         "moveSpeed": 1.7,
         "auraRadius": 3,
         "auraBonusPct": 8,
-        "skillCooldownSec": 16
+        "skillCooldownSec": 16,
+        "wallRangeBonus": 1,
+        "wallDamagePct": 10
       },
       "cost": {
         "gold": 2200
@@ -42,7 +45,9 @@
         "moveSpeed": 1.7,
         "auraRadius": 3,
         "auraBonusPct": 16,
-        "skillCooldownSec": 14
+        "skillCooldownSec": 14,
+        "wallRangeBonus": 1,
+        "wallDamagePct": 10
       },
       "cost": {
         "gold": 8800
@@ -61,7 +66,9 @@
         "moveSpeed": 1.7,
         "auraRadius": 3,
         "auraBonusPct": 24,
-        "skillCooldownSec": 12
+        "skillCooldownSec": 12,
+        "wallRangeBonus": 1,
+        "wallDamagePct": 10
       },
       "cost": {
         "gold": 19800

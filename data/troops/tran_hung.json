@@ -6,6 +6,7 @@
   "artSubject": "a heroic warrior general with a big two-handed sword and a flowing red cape",
   "props": {
     "unitClass": "general",
+    "canClimbWalls": false,
     "role": "melee",
     "skill": "Hống Lôi Trảm — chém lan đẩy lùi quái",
     "size": 1,

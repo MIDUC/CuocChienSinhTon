@@ -142,8 +142,13 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'capacity', label: 'Sức chứa' },
     ],
     props: [
-      { key: 'category', label: 'Nhóm', hint: 'core | military | defense | economy | storage | wall' },
-      { key: 'size', label: 'Kích thước (ô)', hint: '2 = chiếm 2×2 ô' },
+      { key: 'category', label: 'Nhóm', hint: 'core | military | defense | economy | storage | wall | gate' },
+      { key: 'footprintW', label: 'Chiều rộng (ô)', hint: 'nhà lính 2, tường 1, cổng 3' },
+      { key: 'footprintH', label: 'Chiều dài (ô)', hint: 'nhà lính 2, tường 1, cổng 1' },
+      { key: 'blocksPath', label: 'Chặn đường', hint: 'true = không ai đi xuyên qua được (trừ khi có quyền bên dưới)' },
+      { key: 'friendlyPassable', label: 'Lính ta đi qua được', hint: 'cổng: true' },
+      { key: 'enemyPassable', label: 'Quái đi qua được', hint: 'thường false; quái phải phá nếu không còn lối khác' },
+      { key: 'standable', label: 'Lính đứng lên được', hint: 'tường thành: true — chỉ lính có “Leo lên tường” mới đứng được' },
       { key: 'spawns', label: 'Xuất quân', hint: 'key của lính hoặc tướng, ví dụ swordsman' },
       { key: 'produces', label: 'Sản xuất tài nguyên', hint: 'key tài nguyên, ví dụ gold' },
       { key: 'maxCount', label: 'Số lượng tối đa' },
@@ -179,9 +184,12 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'auraRadius', label: 'Bán kính hào quang (ô)', hint: 'thường dùng cho tướng' },
       { key: 'auraBonusPct', label: 'Tăng sức mạnh quân xung quanh (%)' },
       { key: 'skillCooldownSec', label: 'Hồi chiêu (giây)' },
+      { key: 'wallRangeBonus', label: 'Tầm đánh + khi đứng trên tường (ô)' },
+      { key: 'wallDamagePct', label: 'Sát thương +% khi đứng trên tường' },
     ],
     props: [
       { key: 'unitClass', label: 'Loại đơn vị', hint: 'soldier = lính thường | general = tướng (nhà chỉ sinh 1)' },
+      { key: 'canClimbWalls', label: 'Leo lên tường', hint: 'true = đứng được trên tường thành (vd cung thủ)' },
       { key: 'role', label: 'Vai trò', hint: 'melee | ranged | tank | support' },
       { key: 'size', label: 'Kích thước (ô)' },
       { key: 'skill', label: 'Tên chiêu thức' },
@@ -206,6 +214,7 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
     ],
     props: [
       { key: 'role', label: 'Kiểu', hint: 'melee | ranged | flying | boss' },
+      { key: 'pathMode', label: 'Cách đi đường', hint: 'avoid = đi vòng, chỉ phá tường khi không còn lối | smash = phá thẳng | fly = bay qua tường' },
       { key: 'target', label: 'Ưu tiên tấn công', hint: 'nearest | buildings | walls | core' },
       { key: 'size', label: 'Kích thước (ô)' },
     ],
@@ -342,6 +351,14 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
     ],
   },
 };
+
+/** Kích thước chiếm chỗ của một công trình (ô). footprintW/H nếu có, không thì dùng size × size. */
+export function footprint(e: Pick<EntityData, 'props'>): { w: number; h: number } {
+  const size = Number(e.props.size) > 0 ? Number(e.props.size) : 1;
+  const w = Number(e.props.footprintW) > 0 ? Number(e.props.footprintW) : size;
+  const h = Number(e.props.footprintH) > 0 ? Number(e.props.footprintH) : size;
+  return { w, h };
+}
 
 export function isEntityType(v: string): v is EntityTypeKey {
   return (ENTITY_TYPES as readonly string[]).includes(v);

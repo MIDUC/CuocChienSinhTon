@@ -4,6 +4,7 @@ import { go } from './App';
 import { copyText, toast } from './toast';
 import GarrisonPanel, { GARRISON_PROPS } from './GarrisonPanel';
 import EffectsEditor from './EffectsEditor';
+import FootprintPanel, { FOOTPRINT_PROPS } from './FootprintPanel';
 import type { EntityData, EntitySummary, EntityView, FieldDef, LevelData, LevelPrompt, Meta, Reward, TypeDef } from './types';
 
 interface Props {
@@ -31,7 +32,7 @@ function blank(typeDef: TypeDef): EntityData {
     name: '',
     description: '',
     artSubject: '',
-    props: typeDef.type === 'building' || typeDef.type === 'troop' || typeDef.type === 'monster' || typeDef.type === 'decoration' ? { size: 1 } : {},
+    props: typeDef.type === 'building' ? { footprintW: 1, footprintH: 1, blocksPath: true, friendlyPassable: false, enemyPassable: false, standable: false } : typeDef.type === 'troop' || typeDef.type === 'monster' || typeDef.type === 'decoration' ? { size: 1 } : {},
     levels: [{ level: 1, stats: {}, cost: {}, image: null, artNote: '', ...(typeDef.hasRewards ? { rewards: [] } : {}) }],
   };
 }
@@ -214,7 +215,7 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
             <small>Ghép vào đầu prompt vẽ ảnh của mọi cấp. Ngoại hình riêng từng cấp sửa ở mục “Hình ảnh theo cấp”.</small>
           </label>
         </div>
-        <PropsEditor typeDef={typeDef} props={draft.props} all={all} hide={hasGarrison ? GARRISON_PROPS : []} onChange={(props) => set({ props })} />
+        <PropsEditor typeDef={typeDef} props={draft.props} all={all} hide={[...(hasGarrison ? GARRISON_PROPS : []), ...(typeDef.type === 'building' ? FOOTPRINT_PROPS : [])]} onChange={(props) => set({ props })} />
       </section>
 
       <section className="panel">
@@ -251,6 +252,8 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
         {typeDef.hasRewards && <RewardsEditor levels={draft.levels} all={all} onChange={setLevels} />}
         {typeDef.hasEffects && <EffectsEditor levels={draft.levels} effectTypes={meta.effects} onChange={setLevels} />}
       </section>
+
+      {typeDef.type === 'building' && <FootprintPanel draft={draft} all={all} setProps={(props) => set({ props })} />}
 
       {hasGarrison && (
         <GarrisonPanel

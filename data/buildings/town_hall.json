@@ -6,7 +6,12 @@
   "artSubject": "a medieval castle keep with towers, the heart of the city",
   "props": {
     "category": "core",
-    "size": 3,
+    "footprintW": 3,
+    "footprintH": 3,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": false,
     "maxCount": 1
   },
   "levels": [

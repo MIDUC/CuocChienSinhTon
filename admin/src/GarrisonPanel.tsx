@@ -49,7 +49,9 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
   const engageMode = String(draft.props.engageMode ?? 'all');
   const chase = Number(draft.props.chaseRadius ?? 2);
   const returnWhenClear = draft.props.returnWhenClear !== false;
-  const size = Number(draft.props.size) || 1;
+  const fpW = Number(draft.props.footprintW) || Number(draft.props.size) || 1;
+  const fpH = Number(draft.props.footprintH) || Number(draft.props.size) || 1;
+  const size = Math.max(fpW, fpH);
   const prop = (k: string, v: string | number | boolean) => setProps({ ...draft.props, [k]: v });
   const rallySelectable = draft.props.rallySelectable !== false;
   const rally = { x: Number(draft.props.rallyX) || 0, y: Number(draft.props.rallyY) || 0 };

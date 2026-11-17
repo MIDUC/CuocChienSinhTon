@@ -6,7 +6,12 @@
   "artSubject": "a straight segment of castle wall with crenellations",
   "props": {
     "category": "wall",
-    "size": 1
+    "footprintW": 1,
+    "footprintH": 1,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": true
   },
   "levels": [
     {

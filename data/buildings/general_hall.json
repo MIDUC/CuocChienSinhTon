@@ -6,7 +6,12 @@
   "artSubject": "a grand commander's hall with a war banner, armor stand and a map table outside",
   "props": {
     "category": "military",
-    "size": 2,
+    "footprintW": 2,
+    "footprintH": 2,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": false,
     "spawns": "tran_hung",
     "maxCount": 2,
     "garrisonFormation": "ring",

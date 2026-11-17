@@ -6,6 +6,7 @@
   "artSubject": "a gigantic troll king boss with a crown and a stone hammer",
   "props": {
     "role": "boss",
+    "pathMode": "avoid",
     "target": "walls",
     "size": 2
   },

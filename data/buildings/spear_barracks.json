@@ -6,7 +6,12 @@
   "artSubject": "a fortified spearmen camp with wooden palisade, spear racks and a striped command tent",
   "props": {
     "category": "military",
-    "size": 2,
+    "footprintW": 2,
+    "footprintH": 2,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": false,
     "spawns": "spearman",
     "maxCount": 4,
     "garrisonFormation": "grid",

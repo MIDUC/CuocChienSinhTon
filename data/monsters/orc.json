@@ -6,6 +6,7 @@
   "artSubject": "a big muscular orc brute with a spiked club",
   "props": {
     "role": "melee",
+    "pathMode": "avoid",
     "target": "buildings",
     "size": 1
   },

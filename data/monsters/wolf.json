@@ -6,6 +6,7 @@
   "artSubject": "a wild grey wolf, snarling, low to the ground",
   "props": {
     "role": "melee",
+    "pathMode": "avoid",
     "target": "nearest",
     "size": 1
   },

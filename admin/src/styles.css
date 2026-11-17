@@ -246,3 +246,14 @@ label.check input { width: auto; }
 .filters select { width: auto; }
 @media (max-width: 820px) { .effects { grid-template-columns: 1fr; } }
 .equip-info { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 14px; font-size: 13px; } .equip-info small { flex-basis: 100%; }
+.fp-grid { display: grid; grid-template-columns: 1fr 260px; gap: 18px; align-items: start; }
+.fp-flags { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; margin-bottom: 6px; }
+.fp-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--bg); border-radius: 10px; padding: 10px; }
+.fp-figure svg { width: 100%; max-height: 180px; }
+.fp-free { fill: #7cc456; stroke: rgba(0, 0, 0, 0.12); }
+.fp-build { fill: #b9925f; stroke: rgba(0, 0, 0, 0.3); }
+.fp-gate { fill: #e8c25a; stroke: rgba(0, 0, 0, 0.3); }
+.rules { margin-top: 10px; font-size: 13px; }
+.rules summary { cursor: pointer; font-weight: 600; }
+.rules li { margin-bottom: 4px; }
+@media (max-width: 820px) { .fp-grid, .fp-flags { grid-template-columns: 1fr; } }

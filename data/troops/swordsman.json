@@ -6,6 +6,7 @@
   "artSubject": "a sturdy medieval swordsman with sword and shield",
   "props": {
     "unitClass": "soldier",
+    "canClimbWalls": false,
     "role": "melee",
     "size": 1,
     "equipSlots": "weapon,armor,helmet"

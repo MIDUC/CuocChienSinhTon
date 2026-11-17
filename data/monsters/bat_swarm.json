@@ -6,6 +6,7 @@
   "artSubject": "a giant purple demon bat flying with wings spread",
   "props": {
     "role": "flying",
+    "pathMode": "fly",
     "target": "core",
     "size": 1
   },

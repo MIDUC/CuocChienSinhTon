@@ -49,6 +49,16 @@ function building(e: EntityData, level: number, max: number) {
   const cx = 128;
   const cy = 176;
   let body = tile(cx, cy, 124, 62);
+  if (e.props.category === 'gate') {
+    // cổng: 2 tháp hai bên + vòm cửa ở giữa
+    const h = 54 + t * 24;
+    body += box(cx - 62, cy + 2, 26, 13, h + 18, 30, 8, 72);
+    body += box(cx + 62, cy - 2, 26, 13, h + 18, 30, 8, 72);
+    body += box(cx, cy, 44, 10, h, 30, 8, 76);
+    body += `<path d="M${cx - 18} ${cy + 8} L${cx - 18} ${cy - 22} Q${cx} ${cy - 44} ${cx + 18} ${cy - 22} L${cx + 18} ${cy + 8} Z" fill="#5b3a24" stroke="#3e2516" stroke-width="3"/>`;
+    body += `<rect x="${cx - 2}" y="${cy - h - 40}" width="4" height="30" fill="#5b4636"/><polygon points="${pts([[cx + 2, cy - h - 40], [cx + 24, cy - h - 33], [cx + 2, cy - h - 26]])}" fill="${hsl(hue + 180, 70, 55)}"/>`;
+    return body;
+  }
   const isWall = e.props.category === 'wall';
   if (isWall) {
     const h = 30 + t * 30;

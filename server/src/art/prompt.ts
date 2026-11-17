@@ -1,4 +1,4 @@
-import { EntityData, EntityTypeKey, LevelData } from '../entities/definitions';
+import { EntityData, EntityTypeKey, LevelData, footprint } from '../entities/definitions';
 
 /** Phong cách chung cho mọi ảnh. Lưu trong bảng Setting (key "artStyle"), sửa được trên trang admin. */
 export interface ArtStyle {
@@ -43,14 +43,18 @@ export function recommendedSize(e: EntityData, style: ArtStyle): SizeSpec {
   const tw = style.tileWidth; // 1 ô = tw × tw/2 khi xoay chéo
   switch (e.type) {
     case 'building': {
-      const n = numProp(e, 'size', 1);
-      const w = tw * n * 2; // xuất ảnh @2x cho nét trên màn hình retina / điện thoại
+      const fp = footprint(e);
+      // đế hình thoi của khối w×h ô rộng (w+h)/2 ô theo bề ngang; xuất @2x cho nét trên điện thoại
+      const w = tw * (fp.w + fp.h);
+      const square = fp.w === fp.h;
+      const hgt = square ? w : Math.round(w * 0.75);
       return {
         width: w,
-        height: w,
+        height: hgt,
         note:
-          `Công trình ${n}×${n} ô. Đế hình thoi rộng đúng bề ngang ảnh (${w}px), nằm sát đáy ảnh; ` +
-          `phần nhà cao lên phía trên. PNG nền trong suốt, xuất @2x (trong game hiển thị ${w / 2}×${w / 2}).`,
+          `Công trình ${fp.w}×${fp.h} ô${square ? '' : ' (hình chữ nhật, cạnh dài chạy chéo xuống bên phải)'}. ` +
+          `Đế rộng đúng bề ngang ảnh (${w}px), nằm sát đáy ảnh; phần nhà cao lên phía trên. ` +
+          `PNG nền trong suốt, xuất @2x (trong game hiển thị ${w / 2}×${hgt / 2}).`,
       };
     }
     case 'troop':
@@ -109,7 +113,7 @@ export function recommendedSize(e: EntityData, style: ArtStyle): SizeSpec {
 const GENERAL_FRAMING = 'a single heroic general character, full body, larger and more ornate than a normal soldier, confident pose';
 
 const TYPE_FRAMING: Record<EntityTypeKey, string> = {
-  building: 'a building that stands on a {size} square grass tile shown as an isometric diamond base',
+  building: 'a building that stands on a {size} grass tile footprint, shown as an isometric base',
   troop: 'a single soldier unit character, full body, standing in an idle combat pose',
   monster: 'a single monster enemy character, full body, menacing but cute stylized proportions',
   resource: 'a game resource icon',
@@ -141,8 +145,8 @@ export interface LevelPrompt {
 export function buildPrompts(e: EntityData, style: ArtStyle): LevelPrompt[] {
   const size = recommendedSize(e, style);
   const max = e.levels.length;
-  const n = numProp(e, 'size', 1);
-  const framing = (e.type === 'troop' && e.props.unitClass === 'general' ? GENERAL_FRAMING : TYPE_FRAMING[e.type]).replace('{size}', `${n}x${n}`).replace('{slot}', String(e.props.slot ?? 'item'));
+  const fp = footprint(e);
+  const framing = (e.type === 'troop' && e.props.unitClass === 'general' ? GENERAL_FRAMING : TYPE_FRAMING[e.type]).replace('{size}', fp.w === fp.h ? `${fp.w}x${fp.h} square` : `${fp.w}x${fp.h} long rectangular`).replace('{slot}', String(e.props.slot ?? 'item'));
   const subject = e.artSubject.trim() || e.name;
 
   return e.levels.map((lv) => {

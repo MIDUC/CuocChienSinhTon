@@ -6,7 +6,12 @@
   "artSubject": "a stone quarry with grey boulders, a wooden crane and cut stone blocks",
   "props": {
     "category": "economy",
-    "size": 2,
+    "footprintW": 2,
+    "footprintH": 2,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": false,
     "produces": "stone",
     "maxCount": 3
   },

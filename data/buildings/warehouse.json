@@ -6,7 +6,12 @@
   "artSubject": "a storage warehouse with crates, barrels and sacks",
   "props": {
     "category": "storage",
-    "size": 2,
+    "footprintW": 2,
+    "footprintH": 2,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": false,
     "maxCount": 3
   },
   "levels": [

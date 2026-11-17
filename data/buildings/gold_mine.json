@@ -6,7 +6,12 @@
   "artSubject": "a gold mine entrance in a rocky hill with mine cart rails and gold ore piles",
   "props": {
     "category": "economy",
-    "size": 2,
+    "footprintW": 2,
+    "footprintH": 2,
+    "blocksPath": true,
+    "friendlyPassable": false,
+    "enemyPassable": false,
+    "standable": false,
     "produces": "gold",
     "maxCount": 4
   },

@@ -1,0 +1,61 @@
+{
+  "key": "gate",
+  "type": "building",
+  "name": "Cổng thành",
+  "description": "Cổng nằm trên tường thành, rộng 3 ô. Lính ta đi qua cổng được, quái thì không: quái phải tìm lối khác hoặc phá cổng.",
+  "artSubject": "a castle gatehouse with two small towers and a big wooden double door in the middle, part of a defensive wall",
+  "props": {
+    "category": "gate",
+    "footprintW": 3,
+    "footprintH": 1,
+    "blocksPath": true,
+    "friendlyPassable": true,
+    "enemyPassable": false,
+    "standable": true,
+    "maxCount": 4
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 2000,
+        "buildTimeSec": 30
+      },
+      "cost": {
+        "wood": 200,
+        "stone": 150,
+        "gold": 0
+      },
+      "image": null,
+      "artNote": "wooden gate with log towers and a palisade"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 4500,
+        "buildTimeSec": 60
+      },
+      "cost": {
+        "wood": 0,
+        "stone": 600,
+        "gold": 300
+      },
+      "image": null,
+      "artNote": "stone gatehouse with wooden doors reinforced with iron"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 9000,
+        "buildTimeSec": 90
+      },
+      "cost": {
+        "wood": 0,
+        "stone": 1500,
+        "gold": 900
+      },
+      "image": null,
+      "artNote": "massive stone gatehouse with iron portcullis, blue roofs and golden banners"
+    }
+  ]
+}

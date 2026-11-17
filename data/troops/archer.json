@@ -6,6 +6,7 @@
   "artSubject": "a nimble medieval archer with a longbow and quiver",
   "props": {
     "unitClass": "soldier",
+    "canClimbWalls": true,
     "role": "ranged",
     "size": 1,
     "equipSlots": "weapon,armor,helmet"
@@ -19,7 +20,9 @@
         "armor": 1,
         "attackRange": 4,
         "attackSpeed": 0.9,
-        "moveSpeed": 1.6
+        "moveSpeed": 1.6,
+        "wallRangeBonus": 1,
+        "wallDamagePct": 10
       },
       "cost": {
         "gold": 350
@@ -35,7 +38,9 @@
         "armor": 2,
         "attackRange": 4,
         "attackSpeed": 0.9,
-        "moveSpeed": 1.6
+        "moveSpeed": 1.6,
+        "wallRangeBonus": 1,
+        "wallDamagePct": 10
       },
       "cost": {
         "gold": 1400
@@ -51,7 +56,9 @@
         "armor": 3,
         "attackRange": 4,
         "attackSpeed": 0.9,
-        "moveSpeed": 1.6
+        "moveSpeed": 1.6,
+        "wallRangeBonus": 1,
+        "wallDamagePct": 10
       },
       "cost": {
         "gold": 3150

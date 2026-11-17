@@ -1,4 +1,4 @@
-export type EntityType = 'building' | 'troop' | 'general' | 'monster' | 'resource' | 'chest' | 'terrain' | 'decoration';
+export type EntityType = 'building' | 'troop' | 'general' | 'monster' | 'resource' | 'chest' | 'terrain' | 'decoration' | 'artifact';
 
 export interface Reward {
   item: string;
@@ -12,6 +12,7 @@ export interface LevelData {
   stats: Record<string, number>;
   cost: Record<string, number>;
   rewards?: Reward[];
+  troopStats?: Record<string, number>;
   image: string | null;
   artNote: string;
 }

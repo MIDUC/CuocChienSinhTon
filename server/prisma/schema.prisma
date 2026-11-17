@@ -16,6 +16,7 @@ enum EntityType {
   chest
   terrain
   decoration
+  artifact
 }
 
 /// Mỗi công trình / loại lính / tướng / quái / tài nguyên / rương là MỘT bản ghi JSON riêng.

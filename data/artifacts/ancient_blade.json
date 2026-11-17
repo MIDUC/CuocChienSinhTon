@@ -1,0 +1,53 @@
+{
+  "key": "ancient_blade",
+  "type": "artifact",
+  "name": "Kiếm Cổ",
+  "description": "Tăng sát thương cho lính.",
+  "artSubject": "an ancient short sword relic with runes on the blade",
+  "props": {
+    "rarity": "rare",
+    "appliesTo": "all",
+    "unique": false
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "damagePct": 5,
+        "damage": 2
+      },
+      "cost": {
+        "gold": 500,
+        "gem": 0
+      },
+      "image": null,
+      "artNote": "dull worn bronze"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "damagePct": 10,
+        "damage": 4
+      },
+      "cost": {
+        "gold": 2000,
+        "gem": 10
+      },
+      "image": null,
+      "artNote": "polished silver with a small glowing gem"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "damagePct": 15,
+        "damage": 6
+      },
+      "cost": {
+        "gold": 4500,
+        "gem": 15
+      },
+      "image": null,
+      "artNote": "radiant gold with a large glowing gem and floating runes"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "key": "bronze_shield",
+  "type": "artifact",
+  "name": "Khiên Đồng",
+  "description": "Tăng giáp, hợp với lính cận chiến.",
+  "artSubject": "a round ancient bronze shield with a lion emblem",
+  "props": {
+    "rarity": "common",
+    "appliesTo": "melee",
+    "unique": false
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "armor": 2,
+        "hpPct": 3
+      },
+      "cost": {
+        "gold": 500,
+        "gem": 0
+      },
+      "image": null,
+      "artNote": "dull worn bronze"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "armor": 4,
+        "hpPct": 6
+      },
+      "cost": {
+        "gold": 2000,
+        "gem": 10
+      },
+      "image": null,
+      "artNote": "polished silver with a small glowing gem"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "armor": 6,
+        "hpPct": 9
+      },
+      "cost": {
+        "gold": 4500,
+        "gem": 15
+      },
+      "image": null,
+      "artNote": "radiant gold with a large glowing gem and floating runes"
+    }
+  ]
+}

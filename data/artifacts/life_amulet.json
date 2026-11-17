@@ -1,0 +1,53 @@
+{
+  "key": "life_amulet",
+  "type": "artifact",
+  "name": "Bùa Hộ Mệnh",
+  "description": "Tăng máu và hồi sinh nhanh hơn.",
+  "artSubject": "a glowing green life amulet on a chain",
+  "props": {
+    "rarity": "epic",
+    "appliesTo": "all",
+    "unique": true
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hpPct": 8,
+        "respawnPct": 5
+      },
+      "cost": {
+        "gold": 500,
+        "gem": 0
+      },
+      "image": null,
+      "artNote": "dull worn bronze"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hpPct": 16,
+        "respawnPct": 10
+      },
+      "cost": {
+        "gold": 2000,
+        "gem": 10
+      },
+      "image": null,
+      "artNote": "polished silver with a small glowing gem"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hpPct": 24,
+        "respawnPct": 15
+      },
+      "cost": {
+        "gold": 4500,
+        "gem": 15
+      },
+      "image": null,
+      "artNote": "radiant gold with a large glowing gem and floating runes"
+    }
+  ]
+}

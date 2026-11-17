@@ -1,0 +1,53 @@
+{
+  "key": "eagle_eye",
+  "type": "artifact",
+  "name": "Mắt Đại Bàng",
+  "description": "Tăng tầm bắn cho cung thủ.",
+  "artSubject": "a mystical eagle eye gem set in a feathered golden brooch",
+  "props": {
+    "rarity": "legendary",
+    "appliesTo": "ranged",
+    "unique": true
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "attackRange": 0.5,
+        "damagePct": 4
+      },
+      "cost": {
+        "gold": 500,
+        "gem": 0
+      },
+      "image": null,
+      "artNote": "dull worn bronze"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "attackRange": 1.0,
+        "damagePct": 8
+      },
+      "cost": {
+        "gold": 2000,
+        "gem": 10
+      },
+      "image": null,
+      "artNote": "polished silver with a small glowing gem"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "attackRange": 1.5,
+        "damagePct": 12
+      },
+      "cost": {
+        "gold": 4500,
+        "gem": 15
+      },
+      "image": null,
+      "artNote": "radiant gold with a large glowing gem and floating runes"
+    }
+  ]
+}

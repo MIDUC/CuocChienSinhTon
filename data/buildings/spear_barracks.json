@@ -13,7 +13,12 @@
     "garrisonSpacing": 1,
     "engageMode": "split",
     "chaseRadius": 1,
-    "returnWhenClear": true
+    "returnWhenClear": true,
+    "rallySelectable": true,
+    "rallyX": 0,
+    "rallyY": 0,
+    "artifactSlots": 5,
+    "statPointValues": "hp:30,damage:2,armor:2"
   },
   "levels": [
     {
@@ -24,14 +29,23 @@
         "troopCount": 1,
         "troopLevel": 1,
         "respawnSec": 24,
-        "buildTimeSec": 40
+        "buildTimeSec": 40,
+        "statPoints": 0
       },
       "cost": {
         "gold": 250,
         "wood": 200
       },
       "image": null,
-      "artNote": "small camp with one tent and a few spears"
+      "artNote": "small camp with one tent and a few spears",
+      "troopStats": {
+        "hp": 200,
+        "damage": 13,
+        "armor": 5,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      }
     },
     {
       "level": 2,
@@ -41,14 +55,23 @@
         "troopCount": 3,
         "troopLevel": 1,
         "respawnSec": 21,
-        "buildTimeSec": 80
+        "buildTimeSec": 80,
+        "statPoints": 4
       },
       "cost": {
         "gold": 1000,
         "wood": 800
       },
       "image": null,
-      "artNote": "bigger camp with two tents and a palisade"
+      "artNote": "bigger camp with two tents and a palisade",
+      "troopStats": {
+        "hp": 200,
+        "damage": 13,
+        "armor": 5,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      }
     },
     {
       "level": 3,
@@ -58,14 +81,23 @@
         "troopCount": 6,
         "troopLevel": 2,
         "respawnSec": 18,
-        "buildTimeSec": 120
+        "buildTimeSec": 120,
+        "statPoints": 5
       },
       "cost": {
         "gold": 2250,
         "wood": 1800
       },
       "image": null,
-      "artNote": "stone base camp with tents, flags and spear racks"
+      "artNote": "stone base camp with tents, flags and spear racks",
+      "troopStats": {
+        "hp": 400,
+        "damage": 17,
+        "armor": 10,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      }
     },
     {
       "level": 4,
@@ -75,14 +107,23 @@
         "troopCount": 9,
         "troopLevel": 2,
         "respawnSec": 15,
-        "buildTimeSec": 160
+        "buildTimeSec": 160,
+        "statPoints": 6
       },
       "cost": {
         "gold": 4000,
         "wood": 3200
       },
       "image": null,
-      "artNote": "fortified camp with stone towers at the corners"
+      "artNote": "fortified camp with stone towers at the corners",
+      "troopStats": {
+        "hp": 400,
+        "damage": 17,
+        "armor": 10,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      }
     },
     {
       "level": 5,
@@ -92,14 +133,23 @@
         "troopCount": 16,
         "troopLevel": 3,
         "respawnSec": 12,
-        "buildTimeSec": 200
+        "buildTimeSec": 200,
+        "statPoints": 7
       },
       "cost": {
         "gold": 6250,
         "wood": 5000
       },
       "image": null,
-      "artNote": "grand military camp with stone walls, golden banners and many spear racks"
+      "artNote": "grand military camp with stone walls, golden banners and many spear racks",
+      "troopStats": {
+        "hp": 600,
+        "damage": 21,
+        "armor": 15,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      }
     }
   ]
 }

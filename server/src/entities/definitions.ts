@@ -3,7 +3,7 @@
  * Đây là nguồn duy nhất: trang admin đọc thông tin này qua GET /api/meta.
  */
 
-export const ENTITY_TYPES = ['building', 'troop', 'general', 'monster', 'resource', 'chest', 'terrain', 'decoration'] as const;
+export const ENTITY_TYPES = ['building', 'troop', 'general', 'monster', 'resource', 'chest', 'terrain', 'decoration', 'artifact'] as const;
 export type EntityTypeKey = (typeof ENTITY_TYPES)[number];
 
 /** Một phần thưởng trong rương. item dạng "resource:gold", "troop:swordsman", "general:tran_hung", "chest:wooden_chest" */
@@ -23,6 +23,8 @@ export interface LevelData {
   cost: Record<string, number>;
   /** Phần thưởng (chỉ dùng cho rương) */
   rewards?: Reward[];
+  /** Chỉ số của lính do nhà này sinh ra, ở cấp nhà này (nhà lính / nhà tướng). Ghi đè chỉ số trong mục Lính. */
+  troopStats?: Record<string, number>;
   /** Đường dẫn ảnh đã upload (ví dụ /assets/building/barracks/lv1-1700000000.png). null = dùng ảnh placeholder */
   image: string | null;
   /** Mô tả ngoại hình riêng của cấp này (tiếng Anh) để ghép vào prompt vẽ ảnh */
@@ -78,6 +80,7 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'buildTimeSec', label: 'Thời gian xây (giây)' },
       { key: 'coverRadius', label: 'Bán kính bao phủ (ô)', hint: 'Nhà lính / nhà tướng: quái vào vùng này thì quân ra đánh' },
       { key: 'troopCount', label: 'Số lính tối đa', hint: 'Nhà lính: số lính đứng quanh nhà (vd 1, 3, 6, 9, 16)' },
+      { key: 'statPoints', label: 'Điểm cộng nhận khi lên cấp này', hint: 'Người chơi tự phân bổ vào chỉ số lính' },
       { key: 'troopLevel', label: 'Cấp của lính', hint: 'Lính sinh ra ở cấp này (lấy chỉ số + ảnh của cấp đó)' },
       { key: 'respawnSec', label: 'Hồi sinh lính (giây)' },
       { key: 'damage', label: 'Sát thương' },
@@ -97,6 +100,11 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'engageMode', label: 'Cách ra đánh', hint: 'all = cả đội lao ra | split = chia đều theo số quái' },
       { key: 'chaseRadius', label: 'Đuổi thêm ngoài vùng (ô)' },
       { key: 'returnWhenClear', label: 'Hết địch thì quay về', hint: 'true | false' },
+      { key: 'rallySelectable', label: 'Người chơi chọn điểm đóng quân', hint: 'true = được kéo cờ đóng quân trong vùng bao phủ' },
+      { key: 'rallyX', label: 'Điểm đóng quân mặc định X (ô, so với tâm nhà)' },
+      { key: 'rallyY', label: 'Điểm đóng quân mặc định Y (ô, so với tâm nhà)' },
+      { key: 'artifactSlots', label: 'Số ô trang bị cổ vật', hint: 'mặc định 5' },
+      { key: 'statPointValues', label: 'Giá trị 1 điểm cộng', hint: 'hp:20,damage:3,armor:1 — chỉ số nào có trong danh sách thì người chơi được cộng điểm' },
     ],
   },
   troop: {
@@ -240,6 +248,31 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'placeOn', label: 'Đặt trên địa hình', hint: 'grass, sand…' },
     ],
   },
+  artifact: {
+    type: 'artifact',
+    label: 'Cổ vật',
+    folder: 'artifacts',
+    icon: '🏺',
+    hasCost: true,
+    hasRewards: false,
+    note: 'Cổ vật trang bị vào ô cổ vật của nhà lính để tăng chỉ số cho lính của nhà đó. Chỉ số ở đây là phần CỘNG THÊM: số thường = cộng thẳng, đuôi Pct = cộng theo %. Chi phí theo cấp = chi phí nâng cổ vật lên cấp đó.',
+    stats: [
+      { key: 'hp', label: 'Máu +' },
+      { key: 'hpPct', label: 'Máu +%' },
+      { key: 'damage', label: 'Sát thương +' },
+      { key: 'damagePct', label: 'Sát thương +%' },
+      { key: 'armor', label: 'Giáp +' },
+      { key: 'attackSpeedPct', label: 'Tốc độ đánh +%' },
+      { key: 'moveSpeedPct', label: 'Tốc độ chạy +%' },
+      { key: 'attackRange', label: 'Tầm đánh + (ô)' },
+      { key: 'respawnPct', label: 'Giảm thời gian hồi sinh %' },
+    ],
+    props: [
+      { key: 'rarity', label: 'Độ hiếm', hint: 'common | rare | epic | legendary' },
+      { key: 'appliesTo', label: 'Áp dụng cho', hint: 'all | melee | ranged | tank | hoặc key lính, ví dụ archer' },
+      { key: 'unique', label: 'Chỉ trang bị 1 cái mỗi nhà', hint: 'true | false' },
+    ],
+  },
 };
 
 export function isEntityType(v: string): v is EntityTypeKey {
@@ -274,6 +307,7 @@ export function normalizeEntity(raw: any, forcedType?: EntityTypeKey): EntityDat
         image: typeof l?.image === 'string' && l.image ? l.image : null,
         artNote: String(l?.artNote ?? ''),
       };
+      if (l?.troopStats && typeof l.troopStats === 'object') lv.troopStats = numMap(l.troopStats);
       if (TYPE_DEFS[type as EntityTypeKey].hasRewards) {
         lv.rewards = (Array.isArray(l?.rewards) ? l.rewards : []).map((r: any) => ({
           item: String(r?.item ?? ''),

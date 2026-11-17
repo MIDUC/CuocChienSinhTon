@@ -91,6 +91,12 @@ export function recommendedSize(e: EntityData, style: ArtStyle): SizeSpec {
         note: `Vật thể đứng trên ${n}×${n} ô, gốc/chân nằm ở 1/4 dưới ảnh, KHÔNG vẽ ô đất bên dưới (game ghép với ô địa hình). PNG nền trong suốt, xuất @2x.`,
       };
     }
+    case 'artifact':
+      return {
+        width: 256,
+        height: 256,
+        note: 'Biểu tượng cổ vật hiển thị trong ô trang bị và kho đồ. PNG nền trong suốt, vật phẩm chiếm ~80% khung, hơi nghiêng góc isometric.',
+      };
     case 'chest':
       return {
         width: 384,
@@ -108,6 +114,7 @@ const TYPE_FRAMING: Record<EntityTypeKey, string> = {
   resource: 'a game resource icon',
   chest: 'a closed treasure chest game item',
   terrain: 'a single seamless isometric ground tile (2:1 diamond top face with a thin soil side), tileable edges, nothing standing on it',
+  artifact: 'a single magical ancient artifact item icon, slightly tilted in isometric view, with a soft magical glow',
   decoration: 'a single map decoration object standing on the ground, no ground tile under it',
 };
 

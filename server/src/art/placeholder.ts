@@ -206,6 +206,24 @@ function decoration(e: EntityData, level: number, max: number) {
   return g;
 }
 
+function artifact(e: EntityData, level: number, max: number) {
+  const t = max > 1 ? (level - 1) / (max - 1) : 0;
+  const rarityHue: Record<string, number> = { common: 30, rare: 210, epic: 280, legendary: 45 };
+  const hue = rarityHue[String(e.props.rarity)] ?? hash(e.key) % 360;
+  const cx = 128;
+  const cy = 130;
+  let g = `<circle cx="${cx}" cy="${cy}" r="${70 + t * 25}" fill="${hsl(hue, 90, 65)}" opacity="${0.15 + t * 0.25}"/>`;
+  g += `<ellipse cx="${cx}" cy="200" rx="60" ry="14" fill="rgba(0,0,0,.2)"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="54" fill="${hsl(45, 70, 50)}" stroke="${hsl(40, 70, 30)}" stroke-width="5"/>`;
+  g += `<circle cx="${cx}" cy="${cy}" r="38" fill="${hsl(hue, 60, 45)}"/>`;
+  g += `<polygon points="${pts([[cx, cy - 28], [cx + 22, cy], [cx, cy + 28], [cx - 22, cy]])}" fill="${hsl(hue, 80, 70)}" stroke="#fff" stroke-width="2"/>`;
+  for (let i = 0; i < level; i++) {
+    const a = (i / Math.max(1, level)) * Math.PI * 2 - Math.PI / 2;
+    g += `<circle cx="${(cx + Math.cos(a) * 46).toFixed(1)}" cy="${(cy + Math.sin(a) * 46).toFixed(1)}" r="5" fill="#fff6c2"/>`;
+  }
+  return g;
+}
+
 export function placeholderSvg(e: EntityData, level: number): string {
   const max = Math.max(1, e.levels.length);
   const lv = Math.max(1, Math.min(level, max));
@@ -230,6 +248,9 @@ export function placeholderSvg(e: EntityData, level: number): string {
       break;
     case 'decoration':
       body = decoration(e, lv, max);
+      break;
+    case 'artifact':
+      body = artifact(e, lv, max);
       break;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">

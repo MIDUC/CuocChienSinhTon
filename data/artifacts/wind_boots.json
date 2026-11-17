@@ -1,0 +1,53 @@
+{
+  "key": "wind_boots",
+  "type": "artifact",
+  "name": "Giày Gió",
+  "description": "Lính chạy và đánh nhanh hơn.",
+  "artSubject": "a pair of winged leather boots swirling with wind",
+  "props": {
+    "rarity": "rare",
+    "appliesTo": "all",
+    "unique": false
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "moveSpeedPct": 6,
+        "attackSpeedPct": 3
+      },
+      "cost": {
+        "gold": 500,
+        "gem": 0
+      },
+      "image": null,
+      "artNote": "dull worn bronze"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "moveSpeedPct": 12,
+        "attackSpeedPct": 6
+      },
+      "cost": {
+        "gold": 2000,
+        "gem": 10
+      },
+      "image": null,
+      "artNote": "polished silver with a small glowing gem"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "moveSpeedPct": 18,
+        "attackSpeedPct": 9
+      },
+      "cost": {
+        "gold": 4500,
+        "gem": 15
+      },
+      "image": null,
+      "artNote": "radiant gold with a large glowing gem and floating runes"
+    }
+  ]
+}

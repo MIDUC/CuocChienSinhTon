@@ -256,6 +256,7 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
           buildingImage={(lvl) => draft.levels.find((l) => l.level === lvl)?.image ?? placeholderFor(lvl)}
           setProps={(props) => set({ props })}
           setLevels={setLevels}
+          troopStatDefs={meta.types.find((t) => t.type === 'troop')?.stats ?? []}
         />
       )}
 

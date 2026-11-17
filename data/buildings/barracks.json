@@ -13,7 +13,12 @@
     "garrisonSpacing": 1,
     "engageMode": "all",
     "chaseRadius": 2,
-    "returnWhenClear": true
+    "returnWhenClear": true,
+    "rallySelectable": true,
+    "rallyX": 0,
+    "rallyY": 0,
+    "artifactSlots": 5,
+    "statPointValues": "hp:20,damage:3,armor:1,attackSpeed:0.02"
   },
   "levels": [
     {
@@ -24,14 +29,23 @@
         "troopCount": 3,
         "respawnSec": 19,
         "buildTimeSec": 30,
-        "troopLevel": 1
+        "troopLevel": 1,
+        "statPoints": 0
       },
       "cost": {
         "gold": 150,
         "wood": 200
       },
       "image": null,
-      "artNote": "wooden structure, thatched straw roof, simple and small"
+      "artNote": "wooden structure, thatched straw roof, simple and small",
+      "troopStats": {
+        "hp": 120,
+        "damage": 18,
+        "armor": 2,
+        "attackRange": 1,
+        "attackSpeed": 1,
+        "moveSpeed": 1.5
+      }
     },
     {
       "level": 2,
@@ -41,14 +55,23 @@
         "troopCount": 6,
         "respawnSec": 16,
         "buildTimeSec": 60,
-        "troopLevel": 2
+        "troopLevel": 2,
+        "statPoints": 4
       },
       "cost": {
         "gold": 600,
         "wood": 800
       },
       "image": null,
-      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners",
+      "troopStats": {
+        "hp": 240,
+        "damage": 24,
+        "armor": 4,
+        "attackRange": 1,
+        "attackSpeed": 1,
+        "moveSpeed": 1.5
+      }
     },
     {
       "level": 3,
@@ -58,14 +81,23 @@
         "troopCount": 9,
         "respawnSec": 13,
         "buildTimeSec": 90,
-        "troopLevel": 3
+        "troopLevel": 3,
+        "statPoints": 5
       },
       "cost": {
         "gold": 1350,
         "wood": 1800
       },
       "image": null,
-      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches",
+      "troopStats": {
+        "hp": 360,
+        "damage": 30,
+        "armor": 6,
+        "attackRange": 1,
+        "attackSpeed": 1,
+        "moveSpeed": 1.5
+      }
     }
   ]
 }

@@ -1,10 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from './api';
-import { formationSpots } from './formation';
-import type { EntityData, EntitySummary, EntityView, LevelData } from './types';
+import { clampRally, garrisonSpots } from './formation';
+import type { EntityData, EntitySummary, EntityView, FieldDef, LevelData } from './types';
 
 /** Các thuộc tính cố định do khung này quản lý (ẩn khỏi bảng thuộc tính chung) */
-export const GARRISON_PROPS = ['spawns', 'garrisonFormation', 'garrisonSpacing', 'engageMode', 'chaseRadius', 'returnWhenClear'];
+export const GARRISON_PROPS = ['spawns', 'garrisonFormation', 'garrisonSpacing', 'engageMode', 'chaseRadius', 'returnWhenClear', 'rallySelectable', 'rallyX', 'rallyY', 'artifactSlots', 'statPointValues'];
+
+function parsePointValues(s: string): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const part of s.split(',')) {
+    const [k, v] = part.split(':').map((x) => x.trim());
+    if (k && Number.isFinite(Number(v))) out[k] = Number(v);
+  }
+  return out;
+}
+const serializePointValues = (m: Record<string, number>) => Object.entries(m).map(([k, v]) => `${k}:${v}`).join(',');
 
 const QUICK_COUNTS = [1, 3, 6, 9, 16];
 const TW = 64; // bề ngang 1 ô trong khung xem trước
@@ -16,9 +26,11 @@ interface Props {
   buildingImage: (level: number) => string | null;
   setProps: (p: EntityData['props']) => void;
   setLevels: (l: LevelData[]) => void;
+  /** Danh sách chỉ số của lính (lấy từ định nghĩa loại Lính) */
+  troopStatDefs: FieldDef[];
 }
 
-export default function GarrisonPanel({ draft, all, buildingImage, setProps, setLevels }: Props) {
+export default function GarrisonPanel({ draft, all, buildingImage, setProps, setLevels, troopStatDefs }: Props) {
   const units = all.filter((e) => e.type === 'troop' || e.type === 'general');
   const spawnKey = String(draft.props.spawns ?? '');
   const unitSummary = units.find((u) => u.key === spawnKey);
@@ -38,6 +50,53 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
   const returnWhenClear = draft.props.returnWhenClear !== false;
   const size = Number(draft.props.size) || 1;
   const prop = (k: string, v: string | number | boolean) => setProps({ ...draft.props, [k]: v });
+  const rallySelectable = draft.props.rallySelectable !== false;
+  const rally = { x: Number(draft.props.rallyX) || 0, y: Number(draft.props.rallyY) || 0 };
+  // điểm mặc định phải nằm trong vùng bao phủ của MỌI cấp → dùng bán kính nhỏ nhất
+  const minCover = Math.min(...draft.levels.map((l) => l.stats.coverRadius ?? 0));
+  const setRally = (r: { x: number; y: number }) => {
+    const c = clampRally(r, minCover);
+    setProps({ ...draft.props, rallyX: c.x, rallyY: c.y });
+  };
+
+  // ---- cổ vật & điểm cộng ----
+  const slots = Number(draft.props.artifactSlots ?? 5) || 0;
+  const pointValues = parsePointValues(String(draft.props.statPointValues ?? ''));
+  const setPointValue = (k: string, v: number | null) => {
+    const m = { ...pointValues };
+    if (v === null) delete m[k];
+    else m[k] = v;
+    prop('statPointValues', serializePointValues(m));
+  };
+  const artifacts = all.filter((e) => e.type === 'artifact');
+
+  // ---- chỉ số lính ghi ở nhà ----
+  const troopKeys = useMemo(() => {
+    const keys = troopStatDefs.map((d) => d.key);
+    for (const l of draft.levels) for (const k of Object.keys(l.troopStats ?? {})) if (!keys.includes(k)) keys.push(k);
+    return keys;
+  }, [draft.levels, troopStatDefs]);
+  const setTroopStat = (li: number, k: string, raw: string) =>
+    setLevels(
+      draft.levels.map((l, i) => {
+        if (i !== li) return l;
+        const ts = { ...(l.troopStats ?? {}) };
+        if (raw === '') delete ts[k];
+        else ts[k] = Number(raw);
+        return { ...l, troopStats: ts };
+      }),
+    );
+  const fillFromUnit = (onlyEmpty: boolean) => {
+    if (!unit) return;
+    setLevels(
+      draft.levels.map((l) => {
+        const tl = l.stats.troopLevel ?? 1;
+        const src = (unit.levels.find((x) => x.level === tl) ?? unit.levels[unit.levels.length - 1])?.stats ?? {};
+        const picked = Object.fromEntries(Object.entries(src).filter(([k]) => troopStatDefs.some((d) => d.key === k)));
+        return { ...l, troopStats: onlyEmpty ? { ...picked, ...(l.troopStats ?? {}) } : picked };
+      }),
+    );
+  };
 
   const setStat = (li: number, k: string, v: number | null) =>
     setLevels(
@@ -67,7 +126,8 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
       </div>
       <p className="muted">
         Lính đứng chờ quanh nhà theo đội hình bên dưới. Khi quái đi vào <b>vùng bao phủ</b> (chỉ số “Bán kính bao phủ”), lính chạy ra
-        đánh; lính chết sẽ hồi sinh sau “Hồi sinh lính (giây)”. Ảnh và chỉ số của lính lấy từ mục Lính / Tướng, theo “Cấp của lính”.
+        đánh; lính chết sẽ hồi sinh sau “Hồi sinh lính (giây)”. <b>Chỉ số của lính ghi ngay tại nhà này</b> theo từng cấp nhà (bảng
+        “Chỉ số lính”); ảnh lính lấy từ mục Lính / Tướng theo “Cấp của lính”.
       </p>
 
       <div className="form-grid">
@@ -114,6 +174,17 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
           <input type="checkbox" checked={returnWhenClear} onChange={(e) => prop('returnWhenClear', e.target.checked)} />
           Hết địch thì lính quay về vị trí đứng chờ
         </label>
+        <label className="check">
+          <input type="checkbox" checked={rallySelectable} onChange={(e) => prop('rallySelectable', e.target.checked)} />
+          Người chơi được chọn điểm đóng quân (kéo cờ 🚩 trong vùng bao phủ)
+        </label>
+        <div className="rally-row">
+          <span>Điểm đóng quân mặc định (ô, so với tâm nhà):</span>
+          <label className="inline">X <input type="number" step="0.5" value={rally.x} onChange={(e) => setRally({ ...rally, x: Number(e.target.value) })} style={{ width: 70 }} /></label>
+          <label className="inline">Y <input type="number" step="0.5" value={rally.y} onChange={(e) => setRally({ ...rally, y: Number(e.target.value) })} style={{ width: 70 }} /></label>
+          <button className="btn small ghost" onClick={() => setRally({ x: 0, y: 0 })}>Về quanh nhà</button>
+          <small className="muted">Bấm lên ô trong khung xem trước để đặt. Không vượt quá vùng bao phủ nhỏ nhất ({minCover} ô).</small>
+        </div>
       </div>
 
       <h3>Số lính theo cấp nhà</h3>
@@ -162,6 +233,132 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
       </div>
 
       <div className="section-head" style={{ marginTop: 16 }}>
+        <h3 style={{ margin: 0 }}>Chỉ số lính theo cấp nhà</h3>
+        <div className="spacer" />
+        <button className="btn small" disabled={!unit} onClick={() => fillFromUnit(true)} title="Chỉ điền ô đang trống">
+          Điền ô trống từ mục Lính
+        </button>
+        <button className="btn small ghost" disabled={!unit} onClick={() => confirm('Ghi đè toàn bộ chỉ số lính bằng chỉ số trong mục Lính?') && fillFromUnit(false)}>
+          Lấy lại toàn bộ từ mục Lính
+        </button>
+      </div>
+      <div className="table-wrap">
+        <table className="statgrid-lite">
+          <thead>
+            <tr>
+              <th className="sticky-col">Chỉ số lính</th>
+              {draft.levels.map((l, i) => (
+                <th key={i}>Nhà cấp {l.level}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {troopKeys.map((k) => {
+              const def = troopStatDefs.find((d) => d.key === k);
+              return (
+                <tr key={k}>
+                  <th className="sticky-col">
+                    <div>{def?.label ?? k}</div>
+                    <code>{k}</code>
+                  </th>
+                  {draft.levels.map((l, i) => {
+                    const tl = l.stats.troopLevel ?? 1;
+                    const ref = unit?.levels.find((x) => x.level === tl)?.stats[k];
+                    return (
+                      <td key={i}>
+                        <input type="number" step="any" value={l.troopStats?.[k] ?? ''} placeholder={ref !== undefined ? String(ref) : ''} onChange={(e) => setTroopStat(i, k, e.target.value)} />
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <small className="muted">Ô trống thì game dùng chỉ số của lính trong mục Lính (số mờ là giá trị đó).</small>
+
+      <div className="section-head" style={{ marginTop: 20 }}>
+        <h3 style={{ margin: 0 }}>🏺 Cổ vật & điểm cộng</h3>
+      </div>
+      <p className="muted">
+        Người chơi trang bị cổ vật vào các ô của nhà để tăng chỉ số cho lính của nhà này. Mỗi lần nhà lên cấp, người chơi nhận điểm cộng và tự
+        phân bổ vào các chỉ số được phép bên dưới.
+      </p>
+      <div className="artifact-row">
+        <label className="inline">
+          Số ô cổ vật
+          <input type="number" min="0" max="12" value={slots} onChange={(e) => prop('artifactSlots', Number(e.target.value))} style={{ width: 70 }} />
+        </label>
+        <div className="slots">
+          {Array.from({ length: Math.min(slots, 12) }, (_, i) => (
+            <div key={i} className="slot checker" title={`Ô ${i + 1}`}>
+              {artifacts[i] && <img src={artifacts[i].image ?? artifacts[i].placeholder} alt="" />}
+            </div>
+          ))}
+        </div>
+        <small className="muted">
+          Ảnh trong ô chỉ là ví dụ. Có {artifacts.length} cổ vật, sửa ở mục <a href="#/artifact">Cổ vật</a>.
+        </small>
+      </div>
+      <div className="points-grid">
+        <div className="table-wrap">
+          <table className="statgrid-lite">
+            <thead>
+              <tr>
+                <th>Chỉ số lính</th>
+                <th>Cho cộng điểm</th>
+                <th>Mỗi điểm cộng thêm</th>
+              </tr>
+            </thead>
+            <tbody>
+              {troopKeys.map((k) => {
+                const on = k in pointValues;
+                return (
+                  <tr key={k}>
+                    <th>
+                      {troopStatDefs.find((d) => d.key === k)?.label ?? k} <code>{k}</code>
+                    </th>
+                    <td>
+                      <input type="checkbox" checked={on} style={{ width: 'auto' }} onChange={(e) => setPointValue(k, e.target.checked ? 1 : null)} />
+                    </td>
+                    <td>
+                      <input type="number" step="any" disabled={!on} value={on ? pointValues[k] : ''} onChange={(e) => setPointValue(k, Number(e.target.value))} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="table-wrap">
+          <table className="statgrid-lite">
+            <thead>
+              <tr>
+                <th>Cấp nhà</th>
+                <th>Điểm nhận khi lên cấp</th>
+                <th>Tổng điểm</th>
+              </tr>
+            </thead>
+            <tbody>
+              {draft.levels.map((l, i) => {
+                const total = draft.levels.slice(0, i + 1).reduce((a, x) => a + (x.stats.statPoints ?? 0), 0);
+                return (
+                  <tr key={i}>
+                    <th>Cấp {l.level}</th>
+                    <td>
+                      <input type="number" min="0" value={l.stats.statPoints ?? ''} onChange={(e) => setStat(i, 'statPoints', e.target.value === '' ? null : Number(e.target.value))} />
+                    </td>
+                    <td>{total}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="section-head" style={{ marginTop: 16 }}>
         <h3 style={{ margin: 0 }}>Xem trước đội hình</h3>
         <div className="tabs">
           {draft.levels.map((l, i) => (
@@ -186,6 +383,8 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
           unitImg={unitImage(lv.stats.troopLevel ?? 1)}
           enemy={enemy}
           engageMode={engageMode}
+          rally={rally}
+          onPick={setRally}
         />
       )}
     </section>
@@ -207,8 +406,13 @@ function FormationPreview(p: {
   unitImg: string | null;
   enemy: boolean;
   engageMode: string;
+  rally: { x: number; y: number };
+  onPick: (r: { x: number; y: number }) => void;
 }) {
-  const spots = useMemo(() => formationSpots(Math.min(p.count, 64), p.size, p.formation, p.spacing), [p.count, p.size, p.formation, p.spacing]);
+  const spots = useMemo(
+    () => garrisonSpots(Math.min(p.count, 64), p.size, p.formation, p.spacing, p.rally),
+    [p.count, p.size, p.formation, p.spacing, p.rally.x, p.rally.y],
+  );
   const c = p.size / 2;
   const reach = Math.max(p.cover + p.chase, ...spots.map((s) => Math.max(Math.abs(s.x - c), Math.abs(s.y - c)))) + 1;
   const R = Math.ceil(Math.min(reach, 12));
@@ -232,6 +436,7 @@ function FormationPreview(p: {
           key={`${x},${y}`}
           points={[a, b, d, e].map((q) => `${q.x},${q.y}`).join(' ')}
           className={inside ? 'pv-foot' : (x + y) % 2 ? 'pv-tile a' : 'pv-tile b'}
+          onClick={() => p.onPick({ x: x + 0.5 - p.size / 2, y: y + 0.5 - p.size / 2 })}
         />,
       );
     }
@@ -305,6 +510,15 @@ function FormationPreview(p: {
           return <ellipse key={`h${i}`} cx={q.x} cy={q.y} rx={10} ry={5} className="pv-home" />;
         })}
         {homeLines}
+        {(p.rally.x !== 0 || p.rally.y !== 0) && (() => {
+          const f = iso(c + p.rally.x, c + p.rally.y);
+          return (
+            <g className="pv-flag">
+              <line x1={center.x} y1={center.y} x2={f.x} y2={f.y} />
+              <text x={f.x} y={f.y - 4} textAnchor="middle" fontSize="26">🚩</text>
+            </g>
+          );
+        })()}
         {items.map((i) => i.el)}
       </svg>
       <div className="legend">

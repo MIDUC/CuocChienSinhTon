@@ -184,3 +184,27 @@ thead .sticky-col { background: var(--bg); }
   .levels, .rewards { grid-template-columns: 1fr; }
   .page-head.sticky { top: 54px; }
 }
+
+/* Lính đóng quân */
+label.check { flex-direction: row !important; align-items: center; gap: 8px; font-weight: 500; }
+label.check input { width: auto; }
+.garrison-table tbody tr { cursor: pointer; }
+.garrison-table tbody tr.sel { background: var(--accent-soft); }
+.count-cell { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.count-cell input { width: 70px; }
+.chip.on { border-style: solid; border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.unit-thumb { width: 44px; height: 44px; object-fit: contain; border-radius: 6px; display: block; }
+.preview-wrap { border: 1px solid var(--line); border-radius: 12px; padding: 8px; margin-top: 10px; background: var(--bg); }
+.formation-preview { width: 100%; max-height: 520px; display: block; }
+.pv-tile.a { fill: #7cc456; stroke: rgba(0, 0, 0, 0.08); }
+.pv-tile.b { fill: #74bb4f; stroke: rgba(0, 0, 0, 0.08); }
+.pv-foot { fill: #b9925f; stroke: rgba(0, 0, 0, 0.15); }
+.pv-cover { fill: rgba(255, 213, 74, 0.18); stroke: #e0a526; stroke-width: 2; stroke-dasharray: 6 4; }
+.pv-chase { fill: none; stroke: rgba(192, 57, 43, 0.6); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.pv-home { fill: rgba(255, 255, 255, 0.55); stroke: rgba(0, 0, 0, 0.25); }
+.pv-path { stroke: rgba(192, 57, 43, 0.55); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--muted); padding: 6px 4px 0; }
+.legend i { display: inline-block; width: 14px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.lg-cover { background: rgba(255, 213, 74, 0.5); border: 1px dashed #e0a526; }
+.lg-chase { border: 1px dashed rgba(192, 57, 43, 0.8); }
+.lg-home { background: #fff; border: 1px solid rgba(0, 0, 0, 0.3); }

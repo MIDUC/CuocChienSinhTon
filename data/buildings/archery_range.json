@@ -8,7 +8,12 @@
     "category": "military",
     "size": 2,
     "spawns": "archer",
-    "maxCount": 4
+    "maxCount": 4,
+    "garrisonFormation": "ring",
+    "garrisonSpacing": 1,
+    "engageMode": "all",
+    "chaseRadius": 2,
+    "returnWhenClear": true
   },
   "levels": [
     {
@@ -16,9 +21,10 @@
       "stats": {
         "hp": 700,
         "coverRadius": 4,
-        "troopCount": 2,
+        "troopCount": 1,
         "respawnSec": 22,
-        "buildTimeSec": 40
+        "buildTimeSec": 40,
+        "troopLevel": 1
       },
       "cost": {
         "gold": 200,
@@ -34,7 +40,8 @@
         "coverRadius": 5,
         "troopCount": 3,
         "respawnSec": 19,
-        "buildTimeSec": 80
+        "buildTimeSec": 80,
+        "troopLevel": 2
       },
       "cost": {
         "gold": 800,
@@ -48,9 +55,10 @@
       "stats": {
         "hp": 2100,
         "coverRadius": 5,
-        "troopCount": 4,
+        "troopCount": 6,
         "respawnSec": 16,
-        "buildTimeSec": 120
+        "buildTimeSec": 120,
+        "troopLevel": 3
       },
       "cost": {
         "gold": 1800,

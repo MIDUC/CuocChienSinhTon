@@ -8,7 +8,12 @@
     "category": "military",
     "size": 2,
     "spawns": "swordsman",
-    "maxCount": 6
+    "maxCount": 6,
+    "garrisonFormation": "ring",
+    "garrisonSpacing": 1,
+    "engageMode": "all",
+    "chaseRadius": 2,
+    "returnWhenClear": true
   },
   "levels": [
     {
@@ -18,7 +23,8 @@
         "coverRadius": 3,
         "troopCount": 3,
         "respawnSec": 19,
-        "buildTimeSec": 30
+        "buildTimeSec": 30,
+        "troopLevel": 1
       },
       "cost": {
         "gold": 150,
@@ -32,9 +38,10 @@
       "stats": {
         "hp": 1800,
         "coverRadius": 4,
-        "troopCount": 4,
+        "troopCount": 6,
         "respawnSec": 16,
-        "buildTimeSec": 60
+        "buildTimeSec": 60,
+        "troopLevel": 2
       },
       "cost": {
         "gold": 600,
@@ -48,9 +55,10 @@
       "stats": {
         "hp": 2700,
         "coverRadius": 4,
-        "troopCount": 5,
+        "troopCount": 9,
         "respawnSec": 13,
-        "buildTimeSec": 90
+        "buildTimeSec": 90,
+        "troopLevel": 3
       },
       "cost": {
         "gold": 1350,

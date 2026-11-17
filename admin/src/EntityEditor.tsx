@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from './api';
 import { go } from './App';
 import { copyText, toast } from './toast';
+import GarrisonPanel, { GARRISON_PROPS } from './GarrisonPanel';
 import type { EntityData, EntitySummary, EntityView, FieldDef, LevelData, LevelPrompt, Meta, Reward, TypeDef } from './types';
 
 interface Props {
@@ -146,6 +147,7 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
     setLevels(draft.levels.filter((_, i) => i !== idx));
   };
 
+  const hasGarrison = typeDef.type === 'building' && 'spawns' in draft.props;
   const resourceKeys = all.filter((e) => e.type === 'resource').map((e) => e.key);
   const placeholderFor = (level: number) =>
     view ? `/api/art/placeholder/${view.type}/${view.key}/${level}.svg?v=${new Date(view.updatedAt).getTime()}` : null;
@@ -210,7 +212,7 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
             <small>Ghép vào đầu prompt vẽ ảnh của mọi cấp. Ngoại hình riêng từng cấp sửa ở mục “Hình ảnh theo cấp”.</small>
           </label>
         </div>
-        <PropsEditor typeDef={typeDef} props={draft.props} all={all} onChange={(props) => set({ props })} />
+        <PropsEditor typeDef={typeDef} props={draft.props} all={all} hide={hasGarrison ? GARRISON_PROPS : []} onChange={(props) => set({ props })} />
       </section>
 
       <section className="panel">
@@ -246,6 +248,16 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
         )}
         {typeDef.hasRewards && <RewardsEditor levels={draft.levels} all={all} onChange={setLevels} />}
       </section>
+
+      {hasGarrison && (
+        <GarrisonPanel
+          draft={draft}
+          all={all}
+          buildingImage={(lvl) => draft.levels.find((l) => l.level === lvl)?.image ?? placeholderFor(lvl)}
+          setProps={(props) => set({ props })}
+          setLevels={setLevels}
+        />
+      )}
 
       <section className="panel">
         <div className="section-head">
@@ -302,20 +314,23 @@ function PropsEditor({
   typeDef,
   props,
   all,
+  hide,
   onChange,
 }: {
   typeDef: TypeDef;
   props: EntityData['props'];
   all: EntitySummary[];
+  hide: string[];
   onChange: (p: EntityData['props']) => void;
 }) {
   const [newKey, setNewKey] = useState('');
-  const entries = Object.entries(props);
-  const missing = typeDef.props.filter((p) => !(p.key in props));
+  const allEntries = Object.entries(props);
+  const entries = allEntries.filter(([k]) => !hide.includes(k));
+  const missing = typeDef.props.filter((p) => !(p.key in props) && !(hide.length && hide.includes(p.key)));
   const listId = (k: string) => (k === 'spawns' ? 'dl-units' : k === 'produces' ? 'dl-resources' : undefined);
   const rename = (oldK: string, newK: string) => {
     if (!newK || newK in props) return;
-    onChange(Object.fromEntries(entries.map(([k, v]) => (k === oldK ? [newK, v] : [k, v]))));
+    onChange(Object.fromEntries(allEntries.map(([k, v]) => (k === oldK ? [newK, v] : [k, v]))));
   };
   return (
     <div className="props">
@@ -344,7 +359,7 @@ function PropsEditor({
                 onChange={(e) => onChange({ ...props, [k]: parseValue(e.target.value) })}
               />
               <span className="muted kv-label">{def?.label ?? ''}</span>
-              <button className="icon-btn" title="Xoá" onClick={() => onChange(Object.fromEntries(entries.filter(([x]) => x !== k)))}>
+              <button className="icon-btn" title="Xoá" onClick={() => onChange(Object.fromEntries(allEntries.filter(([x]) => x !== k)))}>
                 ✕
               </button>
             </div>

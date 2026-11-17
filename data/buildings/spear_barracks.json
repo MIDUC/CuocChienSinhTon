@@ -1,0 +1,105 @@
+{
+  "key": "spear_barracks",
+  "type": "building",
+  "name": "Trại thương binh",
+  "description": "Nhà lính thương binh: lính đứng thành khối trước trại, có địch vào vùng thì cả khối lao ra chặn.",
+  "artSubject": "a fortified spearmen camp with wooden palisade, spear racks and a striped command tent",
+  "props": {
+    "category": "military",
+    "size": 2,
+    "spawns": "spearman",
+    "maxCount": 4,
+    "garrisonFormation": "grid",
+    "garrisonSpacing": 1,
+    "engageMode": "split",
+    "chaseRadius": 1,
+    "returnWhenClear": true
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 1000,
+        "coverRadius": 3,
+        "troopCount": 1,
+        "troopLevel": 1,
+        "respawnSec": 24,
+        "buildTimeSec": 40
+      },
+      "cost": {
+        "gold": 250,
+        "wood": 200
+      },
+      "image": null,
+      "artNote": "small camp with one tent and a few spears"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 2000,
+        "coverRadius": 4,
+        "troopCount": 3,
+        "troopLevel": 1,
+        "respawnSec": 21,
+        "buildTimeSec": 80
+      },
+      "cost": {
+        "gold": 1000,
+        "wood": 800
+      },
+      "image": null,
+      "artNote": "bigger camp with two tents and a palisade"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 3000,
+        "coverRadius": 4,
+        "troopCount": 6,
+        "troopLevel": 2,
+        "respawnSec": 18,
+        "buildTimeSec": 120
+      },
+      "cost": {
+        "gold": 2250,
+        "wood": 1800
+      },
+      "image": null,
+      "artNote": "stone base camp with tents, flags and spear racks"
+    },
+    {
+      "level": 4,
+      "stats": {
+        "hp": 4000,
+        "coverRadius": 5,
+        "troopCount": 9,
+        "troopLevel": 2,
+        "respawnSec": 15,
+        "buildTimeSec": 160
+      },
+      "cost": {
+        "gold": 4000,
+        "wood": 3200
+      },
+      "image": null,
+      "artNote": "fortified camp with stone towers at the corners"
+    },
+    {
+      "level": 5,
+      "stats": {
+        "hp": 5000,
+        "coverRadius": 5,
+        "troopCount": 16,
+        "troopLevel": 3,
+        "respawnSec": 12,
+        "buildTimeSec": 200
+      },
+      "cost": {
+        "gold": 6250,
+        "wood": 5000
+      },
+      "image": null,
+      "artNote": "grand military camp with stone walls, golden banners and many spear racks"
+    }
+  ]
+}

@@ -44,6 +44,7 @@ Bản build: `npm run build` rồi `npm start -w server` — server phục vụ 
 - Thuộc tính cố định (kích thước ô, lính xuất ra, tài nguyên sản xuất…).
 - Bảng **chỉ số theo cấp** (dòng = chỉ số, cột = cấp), thêm/xoá cấp, tự điền các cấp theo % tăng.
 - Chi phí xây / nâng cấp theo tài nguyên; phần thưởng của rương theo cấp.
+- **Lính đóng quân** (nhà lính, trường bắn, nhà tướng…): chọn loại lính, số lính tối đa theo cấp nhà (chọn nhanh 1/3/6/9/16), cấp của lính, đội hình đứng chờ (vây quanh / xếp khối), cách ra đánh khi quái vào vùng bao phủ, xem trước đội hình trên lưới isometric. Thuật toán xếp chỗ đứng ở `admin/src/formation.ts` để game dùng lại.
 - **Ảnh theo cấp**: upload / thay / xoá (kéo thả được). Chưa có ảnh thì dùng ảnh SVG isometric tạm.
 - **Prompt vẽ ảnh** cho từng cấp (bản chung cho Leonardo / Stable Diffusion / ChatGPT, bản Midjourney, negative prompt) kèm kích thước ảnh đề xuất, nút Copy. Phong cách chung sửa ở trang *Phong cách & prompt chung*.
 

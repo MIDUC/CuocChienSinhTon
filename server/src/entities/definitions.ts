@@ -153,6 +153,7 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'chaseRadius', label: 'Đuổi thêm ngoài vùng (ô)' },
       { key: 'returnWhenClear', label: 'Hết địch thì quay về', hint: 'true | false' },
       { key: 'rallySelectable', label: 'Người chơi chọn điểm đóng quân', hint: 'true = được kéo cờ đóng quân trong vùng bao phủ' },
+      { key: 'rallyZone', label: 'Phạm vi đặt điểm đóng quân', hint: 'cover = trong vùng bao phủ của nhà (lính) | territory = mọi nơi trong lãnh thổ (tướng)' },
       { key: 'rallyX', label: 'Điểm đóng quân mặc định X (ô, so với tâm nhà)' },
       { key: 'rallyY', label: 'Điểm đóng quân mặc định Y (ô, so với tâm nhà)' },
       { key: 'artifactSlots', label: 'Số ô trang bị cổ vật', hint: '1 – 10' },

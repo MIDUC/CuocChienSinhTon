@@ -19,7 +19,8 @@
     "rallyY": 0,
     "artifactSlots": 3,
     "statPointValues": "hp:20,damage:3,armor:1,attackSpeed:0.02",
-    "artifactSlotUnlocks": "2,3,3"
+    "artifactSlotUnlocks": "2,3,3",
+    "rallyZone": "cover"
   },
   "levels": [
     {

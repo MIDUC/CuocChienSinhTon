@@ -4,7 +4,7 @@ import { clampRally, garrisonSpots } from './formation';
 import type { EntityData, EntitySummary, EntityView, FieldDef, LevelData } from './types';
 
 /** Các thuộc tính cố định do khung này quản lý (ẩn khỏi bảng thuộc tính chung) */
-export const GARRISON_PROPS = ['spawns', 'garrisonFormation', 'garrisonSpacing', 'engageMode', 'chaseRadius', 'returnWhenClear', 'rallySelectable', 'rallyX', 'rallyY', 'artifactSlots', 'artifactSlotUnlocks', 'statPointValues'];
+export const GARRISON_PROPS = ['spawns', 'garrisonFormation', 'garrisonSpacing', 'engageMode', 'chaseRadius', 'returnWhenClear', 'rallySelectable', 'rallyZone', 'rallyX', 'rallyY', 'artifactSlots', 'artifactSlotUnlocks', 'statPointValues'];
 
 function parsePointValues(s: string): Record<string, number> {
   const out: Record<string, number> = {};
@@ -55,8 +55,10 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
   const rally = { x: Number(draft.props.rallyX) || 0, y: Number(draft.props.rallyY) || 0 };
   // điểm mặc định phải nằm trong vùng bao phủ của MỌI cấp → dùng bán kính nhỏ nhất
   const minCover = Math.min(...draft.levels.map((l) => l.stats.coverRadius ?? 0));
+  // Lính: điểm đóng quân chỉ trong vùng bao phủ của nhà. Tướng: mọi nơi trong lãnh thổ.
+  const territory = draft.props.rallyZone === 'territory';
   const setRally = (r: { x: number; y: number }) => {
-    const c = clampRally(r, minCover);
+    const c = territory ? r : clampRally(r, minCover);
     setProps({ ...draft.props, rallyX: c.x, rallyY: c.y });
   };
 
@@ -152,6 +154,11 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
     if (isGeneralUnit && draft.levels.some((l) => l.stats.troopCount !== 1))
       setLevels(draft.levels.map((l) => ({ ...l, stats: { ...l.stats, troopCount: 1 } })));
   }, [isGeneralUnit, draft.levels]);
+  useEffect(() => {
+    if (!unitSummary) return;
+    const want = isGeneralUnit ? 'territory' : 'cover';
+    if (draft.props.rallyZone !== want) setProps({ ...draft.props, rallyZone: want });
+  }, [isGeneralUnit, unitSummary?.id, draft.props]);
   const equipSlots = String(unitSummary?.props.equipSlots ?? '')
     .split(',')
     .map((x) => x.trim())
@@ -217,14 +224,21 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
         </label>
         <label className="check">
           <input type="checkbox" checked={rallySelectable} onChange={(e) => prop('rallySelectable', e.target.checked)} />
-          Người chơi được chọn điểm đóng quân (kéo cờ 🚩 trong vùng bao phủ)
+          {territory
+            ? 'Người chơi được chọn điểm đóng quân cho tướng (kéo cờ 🚩 tới bất kỳ đâu trong lãnh thổ)'
+            : 'Người chơi được chọn điểm đóng quân (kéo cờ 🚩 trong vùng bao phủ của nhà)'}
         </label>
         <div className="rally-row">
           <span>Điểm đóng quân mặc định (ô, so với tâm nhà):</span>
           <label className="inline">X <input type="number" step="0.5" value={rally.x} onChange={(e) => setRally({ ...rally, x: Number(e.target.value) })} style={{ width: 70 }} /></label>
           <label className="inline">Y <input type="number" step="0.5" value={rally.y} onChange={(e) => setRally({ ...rally, y: Number(e.target.value) })} style={{ width: 70 }} /></label>
           <button className="btn small ghost" onClick={() => setRally({ x: 0, y: 0 })}>Về quanh nhà</button>
-          <small className="muted">Bấm lên ô trong khung xem trước để đặt. Không vượt quá vùng bao phủ nhỏ nhất ({minCover} ô).</small>
+          <small className="muted">
+            Bấm lên ô trong khung xem trước để đặt.{' '}
+            {territory
+              ? 'Tướng: đặt ở mọi nơi trong lãnh thổ, không phụ thuộc vùng bao phủ của nhà. Vùng phát hiện địch (bán kính bao phủ) tính quanh chỗ tướng đứng.'
+              : `Lính: chỉ đặt trong vùng bao phủ của nhà, không vượt quá vùng nhỏ nhất (${minCover} ô).`}
+          </small>
         </div>
       </div>
 
@@ -516,6 +530,7 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
           engageMode={engageMode}
           rally={rally}
           onPick={setRally}
+          coverAtRally={territory}
         />
       )}
     </section>
@@ -539,13 +554,16 @@ function FormationPreview(p: {
   engageMode: string;
   rally: { x: number; y: number };
   onPick: (r: { x: number; y: number }) => void;
+  /** Tướng: vùng phát hiện địch đi theo chỗ tướng đứng */
+  coverAtRally?: boolean;
 }) {
   const spots = useMemo(
     () => garrisonSpots(Math.min(p.count, 64), p.size, p.formation, p.spacing, p.rally),
     [p.count, p.size, p.formation, p.spacing, p.rally.x, p.rally.y],
   );
   const c = p.size / 2;
-  const reach = Math.max(p.cover + p.chase, ...spots.map((s) => Math.max(Math.abs(s.x - c), Math.abs(s.y - c)))) + 1;
+  const rd = Math.max(Math.abs(p.rally.x), Math.abs(p.rally.y));
+  const reach = Math.max(p.coverAtRally ? Math.max(8, rd + p.cover + 1) : p.cover + p.chase, ...spots.map((s) => Math.max(Math.abs(s.x - c), Math.abs(s.y - c)))) + 1;
   const R = Math.ceil(Math.min(reach, 12));
   const lo = Math.floor(c - R);
   const hi = Math.ceil(c + R);
@@ -578,7 +596,9 @@ function FormationPreview(p: {
   const chase = ell(p.cover + p.chase);
 
   // quái giả lập ở mép vùng bao phủ, phía trước-phải
-  const enemies = p.enemy ? [{ x: c + p.cover * 0.75, y: c + p.cover * 0.55 }, ...(p.engageMode === 'split' ? [{ x: c - p.cover * 0.6, y: c + p.cover * 0.7 }] : [])] : [];
+  const zc = p.coverAtRally ? { x: c + p.rally.x, y: c + p.rally.y } : { x: c, y: c };
+  const zone = iso(zc.x, zc.y);
+  const enemies = p.enemy ? [{ x: zc.x + p.cover * 0.75, y: zc.y + p.cover * 0.55 }, ...(p.engageMode === 'split' ? [{ x: zc.x - p.cover * 0.6, y: zc.y + p.cover * 0.7 }] : [])] : [];
   const targetOf = (i: number) => enemies[p.engageMode === 'split' ? i % enemies.length : 0];
 
   type Item = { depth: number; el: JSX.Element };
@@ -634,8 +654,8 @@ function FormationPreview(p: {
     <div className="preview-wrap">
       <svg viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`} className="formation-preview">
         {tiles}
-        {p.chase > 0 && <ellipse cx={center.x} cy={center.y} rx={chase.rx} ry={chase.ry} className="pv-chase" />}
-        <ellipse cx={center.x} cy={center.y} rx={cover.rx} ry={cover.ry} className="pv-cover" />
+        {p.chase > 0 && <ellipse cx={zone.x} cy={zone.y} rx={chase.rx} ry={chase.ry} className="pv-chase" />}
+        <ellipse cx={zone.x} cy={zone.y} rx={cover.rx} ry={cover.ry} className="pv-cover" />
         {spots.map((s, i) => {
           const q = iso(s.x, s.y);
           return <ellipse key={`h${i}`} cx={q.x} cy={q.y} rx={10} ry={5} className="pv-home" />;

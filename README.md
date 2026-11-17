@@ -48,7 +48,7 @@ Bản build: `npm run build` rồi `npm start -w server` — server phục vụ 
 - **Lính đóng quân** (nhà lính, trường bắn, nhà tướng…): chọn loại lính, số lính tối đa theo cấp nhà (chọn nhanh 1/3/6/9/16), cấp của lính, đội hình đứng chờ (vây quanh / xếp khối), cách ra đánh khi quái vào vùng bao phủ, xem trước đội hình trên lưới isometric. Thuật toán xếp chỗ đứng ở `admin/src/formation.ts` để game dùng lại.
   - Lính chết là mất, không tự hồi sinh. Tạo lại lính tại nhà: chi phí 1 lính (`levels[].trainCost`), thời gian tạo 1 lính (`stats.trainTimeSec`), số lính tạo cùng lúc (`stats.trainQueue`).
   - Chỉ số lính ghi ngay trên nhà, theo từng cấp nhà (`levels[].troopStats`); ô trống thì dùng chỉ số trong mục Lính.
-  - Điểm đóng quân: bật/tắt cho người chơi chọn (`rallySelectable`), điểm mặc định (`rallyX`, `rallyY`, tính bằng ô so với tâm nhà). Người chơi chỉ được đặt trong vùng bao phủ (`coverRadius`).
+  - Điểm đóng quân: bật/tắt cho người chơi chọn (`rallySelectable`), điểm mặc định (`rallyX`, `rallyY`, tính bằng ô so với tâm nhà). Phạm vi (`rallyZone`): lính `cover` = chỉ trong vùng bao phủ của nhà; tướng `territory` = mọi nơi trong lãnh thổ, vùng phát hiện địch đi theo chỗ tướng đứng.
   - Cổ vật: số ô trang bị 1–10 (`artifactSlots`), cấp nhà mở từng ô (`artifactSlotUnlocks`, ví dụ `2,4,5,7,8`; cấp 1 chưa mở ô nào nếu không có số 1). Điểm cộng khi lên cấp (`levels[].stats.statPoints`) và giá trị mỗi điểm cho từng chỉ số được phép cộng (`statPointValues`, ví dụ `hp:20,damage:3`).
 - **Vật phẩm** (Cổ vật, Trang bị) có trang tổng quan dạng bảng (lọc theo độ hiếm, vị trí):
   - Cổ vật: trang bị vào ô cổ vật của nhà lính, cộng chỉ số cho lính của nhà đó (số thường = cộng thẳng, đuôi `Pct` = cộng %).

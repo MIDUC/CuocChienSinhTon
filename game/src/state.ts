@@ -86,13 +86,19 @@ export interface SaveState {
   decorations: DecoSave[];
   spawns: { x: number; y: number }[];
   nextId: number;
-  stats: { kills: number; bestWave: number };
+  stats: { kills: number; bestWave: number; chestsOpened: number; cleared: number; spellsCast: number; lost: number };
+  /** id nhiệm vụ đã nhận thưởng */
+  quests: string[];
+  /** 0.75 dễ · 1 thường · 1.35 khó */
+  difficulty: number;
+  savedAt: number;
 }
 
 const SAVE_KEY = 'cuocchiensinhton-save-v1';
 const BACKUP_KEY = 'cuocchiensinhton-wave-backup-v1';
 
 export function saveGame(s: SaveState) {
+  s.savedAt = Date.now();
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(s));
   } catch {
@@ -111,7 +117,7 @@ export function saveWaveBackup(s: SaveState) {
 export function loadWaveBackup(): SaveState | null {
   try {
     const t = localStorage.getItem(BACKUP_KEY);
-    return t ? JSON.parse(t) : null;
+    return t ? normalize(JSON.parse(t)) : null;
   } catch {
     return null;
   }
@@ -125,10 +131,19 @@ export function loadGame(): SaveState | null {
     if (s.version !== 1 || !s.terrain?.length) return null;
     // bỏ công trình không còn trong dữ liệu admin
     s.buildings = s.buildings.filter((b) => get('building', b.key));
-    return s;
+    return normalize(s);
   } catch {
     return null;
   }
+}
+
+/** Bổ sung trường mới cho bản lưu cũ */
+export function normalize(s: SaveState): SaveState {
+  s.stats = Object.assign({ kills: 0, bestWave: 0, chestsOpened: 0, cleared: 0, spellsCast: 0, lost: 0 }, s.stats ?? {});
+  s.quests = s.quests ?? [];
+  s.difficulty = s.difficulty ?? 1;
+  s.savedAt = s.savedAt ?? Date.now();
+  return s;
 }
 
 export function clearSave() {

@@ -3,7 +3,7 @@ import { all, get, lvl } from './data';
 import { BuildingSave, CFG, DecoSave, SaveState, startResources } from './state';
 
 /** Tạo bản đồ mới: địa hình ngẫu nhiên, hồ nước, cây/đá, thành chính ở giữa, 3 cổng quái ở mép bản đồ. */
-export function newState(seed = (Math.random() * 1e9) | 0): SaveState {
+export function newState(seed = (Math.random() * 1e9) | 0, difficulty = 1): SaveState {
   const n = CFG.MAP;
   const rnd = mulberry(seed);
   const terr = new Array<string>(n * n).fill(get('terrain', 'grass') ? 'grass' : all('terrain')[0]?.key ?? 'grass');
@@ -125,7 +125,7 @@ export function newState(seed = (Math.random() * 1e9) | 0): SaveState {
     seed,
     wave: 0,
     prepLeft: CFG.PREP_TIME_FIRST,
-    resources: startResources(),
+    resources: Object.fromEntries(Object.entries(startResources()).map(([k, v]) => [k, Math.round(v * (difficulty < 1 ? 1.5 : difficulty > 1 ? 0.8 : 1))])),
     buildings,
     items: [],
     chests: get('chest', 'wooden_chest') ? [{ id: 1, key: 'wooden_chest', level: 1, unlockLeft: null }] : [],
@@ -134,6 +134,9 @@ export function newState(seed = (Math.random() * 1e9) | 0): SaveState {
     decorations: decos,
     spawns,
     nextId: 100,
-    stats: { kills: 0, bestWave: 0 },
+    stats: { kills: 0, bestWave: 0, chestsOpened: 0, cleared: 0, spellsCast: 0, lost: 0 },
+    quests: [],
+    difficulty,
+    savedAt: Date.now(),
   };
 }

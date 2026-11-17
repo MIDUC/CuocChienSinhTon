@@ -2,6 +2,9 @@ import { buildingTexture, chestIcon, textureDataURL, unitTexture } from './art';
 import { all, dataSource, effectText, Entity, get, lvl, maxLevel, parseKV, STAT_LABEL } from './data';
 import type { GameScene, BRT } from './GameScene';
 import { canAfford, CFG, costText, Item, resourceCap } from './state';
+import { SPELLS } from './GameScene';
+import { claimable, QUESTS, rewardText } from './quests';
+import { isMuted, play, toggleMute } from './sfx';
 import { canEquip, equipSlotsOf, isGeneralHall, roleMatches, slotUnlockLevels, totalStatPoints, troopKeyOf } from './stats';
 
 const RES_ICON: Record<string, string> = { gold: '🪙', wood: '🪵', stone: '🪨', food: '🌾', gem: '💎' };
@@ -32,6 +35,7 @@ export class UI {
   top = el('div', 'top');
   chests = el('div', 'chests');
   bar = el('div', 'buildbar');
+  spells = el('div', 'spells');
   panel = el('div', 'panel');
   hintEl = el('div', 'hint');
   toastEl = el('div', 'toasts');
@@ -42,11 +46,12 @@ export class UI {
   hintT = 0;
 
   constructor() {
-    this.root.append(this.top, this.chests, this.bar, this.panel, this.hintEl, this.toastEl, this.bannerEl, this.modal);
+    this.root.append(this.top, this.chests, this.bar, this.spells, this.panel, this.hintEl, this.toastEl, this.bannerEl, this.modal);
     this.root.addEventListener('pointerdown', (ev) => {
       const t = (ev.target as HTMLElement).closest('[data-act]') as HTMLElement | null;
       if (!t || t.classList.contains('disabled')) return;
       ev.preventDefault();
+      play('click');
       this.act(t.dataset.act!, t.dataset);
     });
   }
@@ -165,6 +170,36 @@ export class UI {
       case 'help':
         this.help();
         return;
+      case 'spell':
+        sc.startSpell(d.spell!);
+        break;
+      case 'move':
+        sc.startMove(id);
+        break;
+      case 'upAll':
+        sc.upgradeAll(id);
+        break;
+      case 'repairAll':
+        sc.repairAll();
+        break;
+      case 'quests':
+        this.quests();
+        return;
+      case 'claim':
+        sc.claimQuest(d.q!);
+        this.quests();
+        return;
+      case 'mute':
+        toggleMute();
+        break;
+      case 'diff':
+        this.closeModal();
+        sc.newGame(Number(d.v));
+        this.toast('Xây dựng phòng thủ trước khi đợt quái đầu tiên tới! Quái đến từ các cổng đỏ ở mép bản đồ. Bấm ❔ để xem cách chơi.', 7000);
+        return;
+      case 'newGamePick':
+        this.difficultyPicker();
+        return;
     }
     this.refresh(true);
   }
@@ -175,6 +210,7 @@ export class UI {
     this.renderTop();
     this.renderChests();
     this.renderBuildBar();
+    this.renderSpells();
     this.renderPanel();
     if (this.hintT && performance.now() > this.hintT) {
       this.hintT = 0;
@@ -197,13 +233,15 @@ export class UI {
     const wave =
       sc.phase === 'battle'
         ? `<div class="wave battle">⚔️ Đợt ${s.wave + 1} <small>còn ${enemies} quái</small></div>`
-        : `<div class="wave">🛡️ Đợt ${s.wave + 1} sau <b>${secs(Math.max(0, s.prepLeft))}</b> <button class="btn red" data-act="wave">Gọi quái ngay</button></div>`;
+        : `<div class="wave">${this.wavePreview()}🛡️ Đợt ${s.wave + 1} sau <b>${secs(Math.max(0, s.prepLeft))}</b> <button class="btn red" data-act="wave">Gọi quái ngay</button></div>`;
+    const qn = claimable(sc).length;
+    const ruined = sc.ruinedCount();
     const speeds = [0, 1, 2, 3].map((n) => `<button class="btn sm ${sc.speed === n ? 'on' : ''}" data-act="speed" data-n="${n}">${n === 0 ? '⏸' : `${n}x`}</button>`).join('');
     const ready = [...sc.bld.values()].some((b) => b.e.props.produces && b.s.stored >= Math.max(10, Number(lvl(b.e, b.s.level).stats.capacity ?? 1000) * 0.15) && sc.active(b));
     this.set(
       this.top,
       'top',
-      `<div class="resbar">${res}${ready ? '<button class="btn sm green" data-act="collectAll">Thu hoạch tất cả</button>' : ''}</div>${wave}<div class="tools">${speeds}<button class="btn sm" data-act="treasury" data-tab="artifact">💠 Kho báu</button><button class="btn sm" data-act="help">❔</button><button class="btn sm" data-act="menu">☰</button></div>`,
+      `<div class="resbar">${res}${ready ? '<button class="btn sm green" data-act="collectAll">Thu hoạch tất cả</button>' : ''}</div>${wave}<div class="tools">${speeds}${ruined ? `<button class="btn sm red" data-act="repairAll">🔧 Sửa ${ruined}</button>` : ''}<button class="btn sm ${qn ? 'gold' : ''}" data-act="quests">📜 Nhiệm vụ${qn ? ` <span class="badge">${qn}</span>` : ''}</button><button class="btn sm" data-act="treasury" data-tab="artifact">💠 Kho báu</button><button class="btn sm" data-act="mute">${isMuted() ? '🔇' : '🔊'}</button><button class="btn sm" data-act="help">❔</button><button class="btn sm" data-act="menu">☰</button></div>`,
     );
   }
 
@@ -227,6 +265,61 @@ export class UI {
     const reserves = Object.entries(s.reserves).filter(([, v]) => v > 0);
     if (reserves.length) html += `<div class="reserve">Lính dự bị: ${reserves.map(([k, v]) => `${esc(get('troop', k)?.name ?? k)} ×${v}`).join(', ')}</div>`;
     this.set(this.chests, 'chests', html);
+  }
+
+  wavePreview() {
+    const sc = this.sc;
+    const w = sc.waveMonsters(sc.s.wave + 1);
+    const items = w.list.map((g) => `${esc(g.e.name)}×${g.count}`).join(', ');
+    const boss = w.list.some((g) => g.e.props.role === 'boss');
+    return `<span class="preview" title="Cấp quái ${w.level} · ${sc.activeSpawns()} cổng">${boss ? '👑 ' : ''}${items} · Lv${w.level}</span>`;
+  }
+
+  renderSpells() {
+    const sc = this.sc;
+    const battle = sc.phase === 'battle';
+    const html = SPELLS.map((sp) => {
+      const left = Math.max(0, (sc.spellCd[sp.id] ?? 0) - sc.t);
+      const ok = battle && left <= 0 && canAfford(sc.s.resources, sp.cost);
+      const on = sc.mode.kind === 'spell' && sc.mode.id === sp.id;
+      return `<div class="spell ${ok ? '' : 'disabled'} ${on ? 'on' : ''}" data-act="spell" data-spell="${sp.id}" title="${esc(sp.name)}: ${esc(sp.desc)} (phím ${sp.key})"><span class="ic">${sp.icon}</span><small>${costHtml(sc.s.resources, sp.cost)}</small>${left > 0 ? `<i class="cd">${Math.ceil(left)}</i>` : ''}<kbd>${sp.key}</kbd></div>`;
+    }).join('');
+    this.spells.classList.toggle('dim', !battle);
+    this.set(this.spells, 'spells', `<div class="ttl">Phép ${battle ? '' : '<small>(dùng khi có quái)</small>'}</div>${html}`);
+  }
+
+  hotkey(i: number) {
+    const cat = CATS.find((c) => c.id === this.cat)!;
+    const e = all('building').filter((x) => cat.match(x))[i];
+    if (e) this.act('build', { key: e.key } as any);
+  }
+
+  nextCat() {
+    const i = CATS.findIndex((c) => c.id === this.cat);
+    this.cat = CATS[(i + 1) % CATS.length].id;
+    this.refresh(true);
+  }
+
+  quests() {
+    const sc = this.sc;
+    const rows = QUESTS.map((q) => {
+      const done = sc.s.quests.includes(q.id);
+      const p = Math.min(q.target, q.progress(sc));
+      const ready = !done && p >= q.target;
+      return `<div class="quest ${done ? 'done' : ''} ${ready ? 'ready' : ''}"><div><b>${esc(q.text)}</b><div class="sub">Thưởng: ${esc(rewardText(q.reward))}</div><div class="prog"><i style="width:${(p / q.target) * 100}%"></i></div></div><div>${done ? '✅' : ready ? `<button class="btn sm gold" data-act="claim" data-q="${q.id}">Nhận</button>` : `<small>${Math.floor(p)}/${q.target}</small>`}</div></div>`;
+    });
+    const order = (h: string) => (h.includes('ready') ? 0 : h.includes('done') ? 2 : 1);
+    rows.sort((a, b) => order(a) - order(b));
+    this.openModal(`<h2>📜 Nhiệm vụ & thành tựu</h2><div class="quests">${rows.join('')}</div><div class="row"><button class="btn" data-act="modalClose">Đóng</button></div>`);
+  }
+
+  difficultyPicker() {
+    this.openModal(`<h2>⚔️ Lập thành mới</h2><p class="sub">Chọn độ khó. Bản đồ được tạo ngẫu nhiên.</p>
+      <div class="diffs">
+        <div class="diff" data-act="diff" data-v="0.75"><b>🌱 Dễ</b><small>Quái yếu hơn 25%, tài nguyên khởi đầu ×1.5</small></div>
+        <div class="diff" data-act="diff" data-v="1"><b>⚔️ Thường</b><small>Cân bằng theo dữ liệu admin</small></div>
+        <div class="diff" data-act="diff" data-v="1.35"><b>💀 Khó</b><small>Quái mạnh hơn 35%, tài nguyên khởi đầu ×0.8</small></div>
+      </div>`);
   }
 
   renderBuildBar() {
@@ -260,6 +353,8 @@ export class UI {
     if (sel?.kind === 'building') {
       const b = sc.bld.get(sel.id);
       if (b) html = this.buildingPanel(b);
+    } else if (sel?.kind === 'unit') {
+      html = this.unitPanel(sel.u);
     } else if (sel?.kind === 'deco') {
       const v = sc.decoMap.get(sel.cell);
       const e = v && get('decoration', v.d.key);
@@ -273,6 +368,24 @@ export class UI {
     }
     this.panel.classList.toggle('show', !!html);
     this.set(this.panel, 'panel', html);
+  }
+
+  unitPanel(u: any) {
+    const sc = this.sc;
+    const st = u.st;
+    const icon = textureDataURL(sc, sc.unitTex(u));
+    const status: string[] = [];
+    if (u.elite) status.push('<span class="tag gold">Tinh anh</span>');
+    if (u.stunUntil > sc.t) status.push('<span class="tag">Choáng</span>');
+    if (u.slowUntil > sc.t) status.push(`<span class="tag">Chậm ${u.slowPct}%</span>`);
+    if (u.dots.length) status.push('<span class="tag">Bỏng/Độc</span>');
+    if (u.abVal) status.push(`<span class="tag">Phá giáp −${u.abVal}</span>`);
+    const mode = { avoid: 'Đi vòng, chỉ phá tường khi hết lối', smash: 'Phá thẳng', fly: 'Bay qua mọi thứ' }[u.ent.props.pathMode as string] ?? '';
+    const target = { nearest: 'Đánh mục tiêu gần nhất', buildings: 'Ưu tiên phá công trình', walls: 'Phá tường cực mạnh', core: 'Lao thẳng vào Thành chính' }[u.ent.props.target as string] ?? '';
+    return `<div class="phead"><img src="${icon}"><div><h3>${esc(u.ent.name)} <span class="lv">Lv${u.level}</span></h3><p>${esc(u.ent.description)}</p>${status.join(' ')}</div><button class="x" data-act="close">✕</button></div>
+      <div class="sec"><div class="hp ${u.team === 'enemy' ? 'red' : ''}"><i style="width:${(u.hp / u.maxHp) * 100}%"></i><span>❤ ${Math.ceil(u.hp)}/${u.maxHp}</span></div>
+      <div class="stats"><span>⚔ ST: <b>${statNum(st.damage)}</b></span><span>🛡 Giáp: <b>${statNum(st.armor)}</b></span><span>🎯 Tầm: <b>${statNum(st.attackRange)}</b></span><span>⏱ Tốc đánh: <b>${statNum(st.attackSpeed)}</b></span><span>👟 Tốc chạy: <b>${statNum(st.moveSpeed)}</b></span>${u.team === 'enemy' ? `<span>🪙 Rơi: <b>${lvl(u.ent, u.level).stats.goldDrop ?? 0}${u.elite ? '×3' : ''}</b></span>` : ''}</div>
+      ${u.team === 'enemy' ? `<div class="sub">${esc(mode)}${target ? ' · ' + esc(target) : ''}</div>` : u.home ? `<div class="sub">Thuộc ${esc(u.home.e.name)}</div>` : ''}</div>`;
   }
 
   buildingPanel(b: BRT) {
@@ -313,6 +426,9 @@ export class UI {
         parts.push(`<div class="sec"><div class="sub">Lên cấp ${bs.level + 1}: ${diff}</div><button class="btn gold wide ${ok ? '' : 'disabled'}" data-act="upgrade" data-id="${bs.id}">⬆ Nâng cấp ${costHtml(s.resources, nl.cost)} · ${secs(Number(nl.stats.buildTimeSec ?? 10) * CFG.BUILD_TIME_SCALE)}</button></div>`);
       } else parts.push('<div class="sec sub">Đã đạt cấp tối đa.</div>');
     }
+    const same = sc.s.buildings.filter((x) => x.key === bs.key && x.level === bs.level && !x.ruined && x.buildLeft <= 0).length;
+    if (same > 1 && bs.level < max && !bs.ruined) parts.push(`<button class="btn wide" data-act="upAll" data-id="${bs.id}">⬆ Nâng cấp tất cả ${same} ${esc(e.name)} cấp ${bs.level}</button>`);
+    if (!bs.ruined && sc.phase !== 'battle') parts.push(`<button class="btn wide" data-act="move" data-id="${bs.id}">✥ Di chuyển</button>`);
     if (e.props.category !== 'core') parts.push(`<button class="btn wide ghost" data-act="sell" data-id="${bs.id}">Dỡ công trình</button>`);
     return parts.join('');
   }
@@ -499,6 +615,10 @@ export class UI {
     };
   }
 
+  modalOpen() {
+    return !this.modal.classList.contains('hidden');
+  }
+
   closeModal() {
     this.modal.classList.add('hidden');
     this.modal.innerHTML = '';
@@ -526,14 +646,14 @@ export class UI {
   gameOver(wave: number) {
     const s = this.sc.s;
     this.openModal(
-      `<div class="over"><h2>🏚️ Thành chính đã thất thủ!</h2><p>Bạn trụ được tới đợt <b>${wave}</b>. Hạ tổng cộng <b>${s.stats.kills}</b> quái.</p><div class="row"><button class="btn gold" data-act="retry">Chơi lại đợt ${wave}</button><button class="btn red" data-act="newGame">Bắt đầu thành mới</button></div></div>`,
+      `<div class="over"><h2>🏚️ Thành chính đã thất thủ!</h2><p>Bạn trụ được tới đợt <b>${wave}</b>. Hạ tổng cộng <b>${s.stats.kills}</b> quái.</p><div class="row"><button class="btn gold" data-act="retry">Chơi lại đợt ${wave}</button><button class="btn red" data-act="newGamePick">Bắt đầu thành mới</button></div></div>`,
     );
   }
 
   menu() {
     this.openModal(
       `<h2>Cuộc Chiến Sinh Tồn</h2><p class="sub">Dữ liệu: ${dataSource === 'server' ? 'từ server (trang admin)' : 'file JSON đóng gói (chưa bật server)'} · Kỷ lục: đợt ${this.sc.s.stats.bestWave} · Đã hạ ${this.sc.s.stats.kills} quái</p>
-      <div class="row"><button class="btn red" data-act="newGame">Bắt đầu thành mới (xoá tiến trình)</button><button class="btn" data-act="modalClose">Đóng</button></div>`,
+      <div class="row"><button class="btn red" data-act="newGamePick">Bắt đầu thành mới (xoá tiến trình)</button><button class="btn" data-act="modalClose">Đóng</button></div>`,
     );
   }
 
@@ -549,10 +669,15 @@ export class UI {
       <li><b>Kinh tế:</b> mỏ, nông trại, xưởng gỗ sản xuất liên tục — bấm vào để thu hoạch. Nhà kho và Thành chính tăng sức chứa. Bấm cây/đá để dọn lấy gỗ, đá.</li>
       <li><b>Rương:</b> nhận sau mỗi đợt; bấm để mở khoá, hết giờ thì bấm để mở.</li>
       <li><b>Kho báu:</b> mua cổ vật, trang bị và gắn vào nhà lính.</li>
-      <li>Phím: <b>Space</b> tạm dừng, <b>Esc</b>/chuột phải huỷ, <b>R</b> xoay.</li></ul><div class="row"><button class="btn" data-act="modalClose">Đã hiểu</button></div>`);
+      <li><b>Phép</b> (góc dưới phải, dùng khi đang đánh): ☄️ Mưa thiên thạch, ❄️ Băng giá, 💚 Hồi sinh lực, 📯 Xung phong.</li>
+      <li><b>Quái tinh anh</b> (ánh vàng) trâu hơn, rơi gấp 3 vàng và ngọc.</li>
+      <li><b>Nhiệm vụ</b> 📜: hoàn thành để nhận tài nguyên, ngọc, rương.</li>
+      <li>Vắng mặt thì mỏ vẫn sản xuất, rương vẫn mở khoá (tối đa 8 giờ).</li>
+      <li>Phím: <b>Space</b> tạm dừng, <b>Esc</b>/chuột phải huỷ, <b>R</b> xoay, <b>1–9</b> chọn công trình, <b>Tab</b> đổi nhóm, <b>Q W E F</b> phép.</li></ul><div class="row"><button class="btn" data-act="modalClose">Đã hiểu</button></div>`);
   }
 
   toast(msg: string, ms = 2200) {
+    if (/Không đủ|Không thể|Không xây|Cần |Quá gần|Ngoài|đã có|đầy/.test(msg)) play('error');
     const t = el('div', 'toast');
     t.textContent = msg;
     this.toastEl.append(t);

@@ -8,6 +8,27 @@ import { astar, Cell } from './path';
 import { BuildingSave, canAfford, CFG, clearSave, loadGame, loadWaveBackup, pay, resourceCap, SaveState, saveGame, saveWaveBackup, Item } from './state';
 import { canEquip, CombatStats, computeStats, isGeneralHall, slotUnlockLevels, totalStatPoints, trainTime, troopKeyOf } from './stats';
 import type { UI } from './ui';
+import { play } from './sfx';
+import { QUESTS } from './quests';
+
+export interface SpellDef {
+  id: string;
+  name: string;
+  icon: string;
+  desc: string;
+  cost: Record<string, number>;
+  cd: number;
+  radius?: number;
+  key: string;
+}
+
+/** Phép của người chơi (dùng trong trận) */
+export const SPELLS: SpellDef[] = [
+  { id: 'meteor', name: 'Mưa thiên thạch', icon: '☄️', desc: 'Gây 300 sát thương trong bán kính 2 ô và làm choáng 1.5 giây', cost: { gem: 3 }, cd: 40, radius: 2, key: 'Q' },
+  { id: 'freeze', name: 'Băng giá', icon: '❄️', desc: 'Làm chậm 60% mọi quái trong bán kính 3 ô trong 5 giây', cost: { wood: 150 }, cd: 35, radius: 3, key: 'W' },
+  { id: 'heal', name: 'Hồi sinh lực', icon: '💚', desc: 'Hồi 60% máu cho toàn bộ lính, tướng và 25% máu công trình', cost: { food: 150 }, cd: 45, key: 'E' },
+  { id: 'warcry', name: 'Hiệu lệnh xung phong', icon: '📯', desc: 'Toàn quân +35% sát thương và tốc chạy trong 12 giây', cost: { gold: 150 }, cd: 60, key: 'F' },
+];
 
 /* ================= Đơn vị (lính, tướng, quái) ================= */
 
@@ -43,6 +64,7 @@ export class Unit {
   sprite!: Phaser.GameObjects.Image;
   bar!: Phaser.GameObjects.Graphics;
   lastHit = -99;
+  elite = false;
   constructor(
     public team: 'ally' | 'enemy',
     public ent: Entity,
@@ -89,7 +111,12 @@ export interface BRT {
   stats: CombatStats | null;
 }
 
-type Mode = { kind: 'none' } | { kind: 'build'; key: string; w: number; h: number } | { kind: 'rally'; id: number };
+type Mode =
+  | { kind: 'none' }
+  | { kind: 'build'; key: string; w: number; h: number }
+  | { kind: 'rally'; id: number }
+  | { kind: 'spell'; id: string }
+  | { kind: 'move'; id: number; w: number; h: number };
 
 const ENEMY_TINT_HIT = 0xff8080;
 
@@ -106,7 +133,10 @@ export class GameScene extends Phaser.Scene {
   spawnQueue: { key: string; level: number; sp: number; hpMul: number }[] = [];
   spawnT = 0;
   mode: Mode = { kind: 'none' };
-  selected: { kind: 'building'; id: number } | { kind: 'deco'; cell: number } | null = null;
+  selected: { kind: 'building'; id: number } | { kind: 'deco'; cell: number } | { kind: 'unit'; u: Unit } | null = null;
+  spellCd: Record<string, number> = {};
+  warcryUntil = 0;
+  waveStat = { kills: 0, lost: 0, gold: 0 };
   speed = 1;
   t = 0;
   hover = { x: -1, y: -1 };
@@ -116,6 +146,7 @@ export class GameScene extends Phaser.Scene {
   fxG!: Phaser.GameObjects.Graphics;
   terrainLayer!: Phaser.GameObjects.Container;
   spawnMarks: Phaser.GameObjects.GameObject[] = [];
+  spawnGfx: Phaser.GameObjects.Graphics[] = [];
   saveT = 0;
   uiT = 0;
   dragWall = false;
@@ -134,8 +165,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.s = loadGame() ?? newState();
+    const loaded = loadGame();
+    this.s = loaded ?? newState();
     this.n = Math.round(Math.sqrt(this.s.terrain.length));
+    const away = loaded ? this.offlineProgress() : '';
     this.input.mouse?.disableContextMenu();
     this.terrainLayer = this.add.container(0, 0).setDepth(-100000);
     this.coverG = this.add.graphics().setDepth(-50000);
@@ -147,7 +180,33 @@ export class GameScene extends Phaser.Scene {
     this.setupInput();
     this.ui.bind(this);
     this.ui.refresh(true);
-    this.ui.toast(this.s.wave === 0 && this.s.prepLeft >= CFG.PREP_TIME_FIRST - 1 ? 'Xây dựng phòng thủ trước khi đợt quái đầu tiên tới! Quái đến từ các cổng đỏ ở mép bản đồ.' : 'Đã tải lại thành của bạn.', 6000);
+    if (!loaded) this.ui.difficultyPicker();
+    else this.ui.toast(away || 'Đã tải lại thành của bạn.', 6000);
+  }
+
+  /** Thời gian vắng mặt: mỏ vẫn sản xuất, rương vẫn mở khoá, công trình vẫn xây (tối đa 8 giờ) */
+  offlineProgress(): string {
+    const sec = Math.min(8 * 3600, (Date.now() - (this.s.savedAt ?? Date.now())) / 1000);
+    if (sec < 30) return '';
+    const got: Record<string, number> = {};
+    for (const b of this.s.buildings) {
+      const e = get('building', b.key);
+      if (!e || b.ruined) continue;
+      const l = lvl(e, b.level).stats;
+      if (b.buildLeft > 0) b.buildLeft = Math.max(0.5, b.buildLeft - sec);
+      if (e.props.produces && !(b.buildLeft > 0 && !b.upgrading)) {
+        const before = b.stored ?? 0;
+        b.stored = Math.min(Number(l.capacity ?? 1000), before + (Number(l.production ?? 0) / 60) * sec);
+        got[e.props.produces] = (got[e.props.produces] ?? 0) + Math.floor(b.stored - before);
+      }
+    }
+    const c = this.s.chests.find((x) => x.unlockLeft != null && x.unlockLeft > 0);
+    if (c) c.unlockLeft = Math.max(0, c.unlockLeft! - sec);
+    const parts = Object.entries(got)
+      .filter(([, v]) => v > 0)
+      .map(([k, v]) => `${v} ${get('resource', k)?.name ?? k}`);
+    const mins = Math.round(sec / 60);
+    return `Bạn vắng mặt ${mins >= 60 ? `${Math.floor(mins / 60)} giờ ${mins % 60} phút` : `${mins} phút`}.${parts.length ? ` Các mỏ đã sản xuất: ${parts.join(', ')} — bấm vào để thu hoạch.` : ''}`;
   }
 
   /* ================= Dựng thế giới ================= */
@@ -162,6 +221,7 @@ export class GameScene extends Phaser.Scene {
     this.decoMap.clear();
     this.spawnMarks.forEach((m) => m.destroy());
     this.spawnMarks = [];
+    this.spawnGfx = [];
     const n = this.n;
     this.occ = new Int32Array(n * n);
     // địa hình
@@ -188,12 +248,34 @@ export class GameScene extends Phaser.Scene {
       g.lineStyle(3, 0xff1744, 0.9);
       g.strokeEllipse(p.x, p.y, 54, 27);
       const tx = this.add.text(p.x, p.y - 26, '☠', { fontSize: '22px', color: '#ff5252', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5).setDepth(800000);
-      this.tweens.add({ targets: g, alpha: 0.5, yoyo: true, repeat: -1, duration: 900 });
+      this.tweens.add({ targets: g, scaleX: 1.08, scaleY: 1.08, yoyo: true, repeat: -1, duration: 900 });
+      g.setPosition(p.x, p.y);
+      g.clear();
+      g.fillStyle(0x7b1fa2, 0.55);
+      g.fillEllipse(0, 0, 54, 27);
+      g.lineStyle(3, 0xff1744, 0.9);
+      g.strokeEllipse(0, 0, 54, 27);
       this.spawnMarks.push(g, tx);
+      this.spawnGfx.push(g);
+      (g as any).label = tx;
     }
+    this.updateSpawnMarks();
     for (const d of this.s.decorations) this.addDeco(d);
     for (const b of this.s.buildings) this.addBRT(b);
     for (const b of this.bld.values()) this.spawnGarrison(b);
+  }
+
+  /** Cổng quái sẽ hoạt động ở đợt tới sáng rõ, cổng chưa hoạt động mờ đi */
+  activeSpawns(n = this.s.wave + 1) {
+    return Math.min(this.s.spawns.length, 1 + Math.floor((n - 1) / 3));
+  }
+
+  updateSpawnMarks() {
+    const k = this.activeSpawns();
+    this.spawnGfx.forEach((g, i) => {
+      g.setAlpha(i < k ? 1 : 0.25);
+      (g as any).label?.setAlpha(i < k ? 1 : 0.3);
+    });
   }
 
   fitCamera() {
@@ -521,6 +603,7 @@ export class GameScene extends Phaser.Scene {
   speedOf(u: Unit) {
     let s = u.st.moveSpeed;
     if (u.slowUntil > this.t) s *= 1 - u.slowPct / 100;
+    if (u.team === 'ally' && this.warcryUntil > this.t) s *= 1.35;
     return Math.max(0.2, s);
   }
 
@@ -528,7 +611,8 @@ export class GameScene extends Phaser.Scene {
 
   update(_time: number, deltaMs: number) {
     if (this.phase === 'over') return;
-    const dt = Math.min(0.1, deltaMs / 1000) * this.speed;
+    // mở hộp thoại thì tạm dừng
+    const dt = this.ui.modalOpen() ? 0 : Math.min(0.1, deltaMs / 1000) * this.speed;
     if (dt <= 0) {
       this.uiT -= deltaMs / 1000;
       if (this.uiT <= 0) {
@@ -674,7 +758,7 @@ export class GameScene extends Phaser.Scene {
     this.phase = 'battle';
     const n = this.s.wave + 1;
     const w = this.waveMonsters(n);
-    const spawnCount = Math.min(this.s.spawns.length, 1 + Math.floor((n - 1) / 3));
+    const spawnCount = this.activeSpawns(n);
     const q: typeof this.spawnQueue = [];
     let i = 0;
     for (const g of w.list) for (let k = 0; k < g.count; k++) q.push({ key: g.e.key, level: Math.min(w.level, maxLevel(g.e)), sp: i++ % spawnCount, hpMul: w.hpMul });
@@ -683,6 +767,8 @@ export class GameScene extends Phaser.Scene {
     this.spawnQueue = q;
     this.spawnT = 0;
     this.waveKills = 0;
+    this.waveStat = { kills: 0, lost: 0, gold: 0 };
+    play('horn');
     // khiên đầu trận
     for (const u of this.units) if (u.team === 'ally') {
       u.revived = false;
@@ -701,10 +787,13 @@ export class GameScene extends Phaser.Scene {
     const e = get('monster', m.key);
     if (!e) return;
     const l = lvl(e, m.level).stats;
+    const n = this.s.wave + 1;
+    const elite = n >= 3 && e.props.role !== 'boss' && Math.random() < 0.05 + n * 0.01;
+    const diff = this.s.difficulty ?? 1;
     const st: CombatStats = {
-      hp: Math.round(Number(l.hp ?? 50) * m.hpMul),
-      damage: Number(l.damage ?? 5) * (0.5 + m.hpMul / 2),
-      armor: Number(l.armor ?? 0),
+      hp: Math.round(Number(l.hp ?? 50) * m.hpMul * diff * (elite ? 2.5 : 1)),
+      damage: Number(l.damage ?? 5) * (0.5 + m.hpMul / 2) * (0.5 + diff / 2) * (elite ? 1.5 : 1),
+      armor: Number(l.armor ?? 0) + (elite ? 3 : 0),
       attackRange: Number(l.attackRange ?? 1),
       attackSpeed: Number(l.attackSpeed ?? 1),
       moveSpeed: Number(l.moveSpeed ?? 1.5),
@@ -717,6 +806,10 @@ export class GameScene extends Phaser.Scene {
     };
     const sp = this.s.spawns[m.sp] ?? this.s.spawns[0];
     const u = this.addUnit('enemy', e, m.level, st, sp.x + 0.5 + (Math.random() - 0.5) * 0.6, sp.y + 0.5 + (Math.random() - 0.5) * 0.6);
+    if (elite) {
+      u.elite = true;
+      u.sprite.setScale(u.sprite.scaleX * 1.25);
+    }
     u.sprite.setAlpha(0);
     this.tweens.add({ targets: u.sprite, alpha: 1, duration: 400 });
   }
@@ -750,13 +843,17 @@ export class GameScene extends Phaser.Scene {
       u.target = null;
       u.dots = [];
     }
-    this.ui.banner(`Thắng đợt ${n}!`, msg);
+    const ws = this.waveStat;
+    this.ui.banner(`Thắng đợt ${n}!`, `${msg} · Hạ ${ws.kills} quái · ${ws.lost ? `mất ${ws.lost} lính` : 'không mất lính nào'} · +${ws.gold} vàng`);
+    play('win');
+    this.updateSpawnMarks();
     this.persist();
     this.ui.refresh(true);
   }
 
   gameOver() {
     this.phase = 'over';
+    play('lose');
     this.ui.gameOver(this.s.wave + 1);
   }
 
@@ -773,7 +870,7 @@ export class GameScene extends Phaser.Scene {
       for (const g of this.units)
         if (g.team === 'ally' && g.alive && g !== u)
           for (const ef of g.st.effects) if (ef.type === 'buffAura' && dist(g.x, g.y, u.x, u.y) <= (ef.radius || 3)) bonus += ef.value / Math.max(1, g.home?.soldiers.length ?? 1);
-      u.auraMul = 1 + bonus / 100;
+      u.auraMul = (1 + bonus / 100) * (this.warcryUntil > this.t ? 1.35 : 1);
     }
     for (const b of this.bld.values()) {
       if (!b.soldiers.length) continue;
@@ -852,6 +949,7 @@ export class GameScene extends Phaser.Scene {
     const cx = ranged ? m.x : u.x;
     const cy = ranged ? m.y : u.y;
     this.ringFx(cx, cy, r, ranged ? 0x80d8ff : 0xffab40);
+    play('skill');
     this.floatText(u.x, u.y - 0.5, String(u.ent.props.skill ?? 'Tuyệt kỹ').split('—')[0].trim(), '#ffd54a', 15);
     for (const e of this.units) {
       if (e.team !== 'enemy' || !e.alive || dist(e.x, e.y, cx, cy) > r) continue;
@@ -1015,6 +1113,8 @@ export class GameScene extends Phaser.Scene {
     const c = this.centerOf(b);
     this.floatText(c.x, c.y, `${b.e.name} bị phá!`, '#ff5252');
     this.cameras.main.shake(150, 0.004);
+    play('break');
+    this.puff(c.x, c.y, 0x8d6e63, 14);
     if (b.e.props.category === 'core') this.gameOver();
   }
 
@@ -1067,6 +1167,8 @@ export class GameScene extends Phaser.Scene {
       else if (u.slowUntil > this.t) u.sprite.setTint(0x99ddff);
       else if (u.dots.length) u.sprite.setTint(0xffbb77);
       else if (this.t - u.lastHit < 0.12) u.sprite.setTint(ENEMY_TINT_HIT);
+      else if (u.elite) u.sprite.setTint(0xffe082);
+      else if (u.team === 'ally' && this.warcryUntil > this.t) u.sprite.setTint(0xffccbc);
       else u.sprite.clearTint();
     }
   }
@@ -1084,8 +1186,10 @@ export class GameScene extends Phaser.Scene {
   attack(a: Unit, t: Unit) {
     if (a.melee) {
       this.lunge(a, t.x, t.y);
+      play('hit');
       this.damage(a, t, a.st.damage, true);
     } else {
+      play('arrow');
       const lift = a.onWall ? 0.8 : 0.45;
       this.projectile(a.x, a.y, lift, t, () => this.damage(a, t, a.st.damage, true));
     }
@@ -1184,7 +1288,16 @@ export class GameScene extends Phaser.Scene {
       let gold = Number(lvl(u.ent, u.level).stats.goldDrop ?? 0);
       let bonus = 0;
       if (by) for (const ef of by.st.effects) if (ef.type === 'goldBonus') bonus += ef.value;
-      gold = Math.round(gold * (1 + bonus / 100));
+      gold = Math.round(gold * (1 + bonus / 100) * (u.elite ? 3 : 1));
+      this.waveStat.kills++;
+      this.waveStat.gold += gold;
+      if (u.elite) {
+        const gem = 1 + Math.floor(Math.random() * 2);
+        this.s.resources.gem = (this.s.resources.gem ?? 0) + gem;
+        this.floatText(u.x, u.y - 0.6, `+${gem}💎`, '#e1bee7', 14);
+      }
+      this.puff(u.x, u.y, u.elite ? 0xffd54a : 0x9e9e9e);
+      play('die');
       if (gold) {
         this.s.resources.gold = Math.min(resourceCap('gold', this.s.buildings), (this.s.resources.gold ?? 0) + gold);
         this.floatText(u.x, u.y, `+${gold}🪙`, '#ffd54a', 12);
@@ -1194,6 +1307,9 @@ export class GameScene extends Phaser.Scene {
     } else if (u.home) {
       const b = u.home;
       b.s.troops = Math.max(0, b.s.troops - 1);
+      this.waveStat.lost++;
+      this.s.stats.lost++;
+      this.puff(u.x, u.y, 0x64b5f6);
       this.floatText(u.x, u.y, u.general ? `${u.ent.name} tử trận!` : 'Lính tử trận', '#ff8a80', 12);
     }
     this.tweens.add({ targets: u.sprite, alpha: 0, y: u.sprite.y - 10, duration: 300 });
@@ -1315,6 +1431,15 @@ export class GameScene extends Phaser.Scene {
         this.circlePath(g, c.x, c.y, Number(l.attackRange), 0xff7043, 0.1);
       }
     }
+    if (this.selected?.kind === 'unit') {
+      const u = this.selected.u;
+      if (!u.alive) this.selected = null;
+      else {
+        const p = iso(u.x, u.y);
+        g.lineStyle(2, u.team === 'enemy' ? 0xff5252 : 0x69f0ae, 1).strokeEllipse(p.x, p.y, 34 * u.size, 17 * u.size);
+        if (u.team === 'enemy') this.circlePath(g, u.x, u.y, u.st.attackRange, 0xff5252, 0.06, 1);
+      }
+    }
     if (this.selected?.kind === 'deco') {
       const x = this.selected.cell % this.n;
       const y = Math.floor(this.selected.cell / this.n);
@@ -1334,6 +1459,8 @@ export class GameScene extends Phaser.Scene {
         this.drawGhost();
         if (this.dragWall && p.isDown) this.tryPlaceWallDrag();
       } else if (this.mode.kind === 'rally') this.drawRallyGhost(g.x, g.y);
+      else if (this.mode.kind === 'spell') this.drawSpellGhost(g.x, g.y);
+      else if (this.mode.kind === 'move') this.drawMoveGhost();
     });
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       if (p.rightButtonDown()) {
@@ -1359,23 +1486,60 @@ export class GameScene extends Phaser.Scene {
         this.setRally(this.mode.id, g.x, g.y);
         return;
       }
+      if (this.mode.kind === 'spell') {
+        this.castSpell(this.mode.id, g.x, g.y);
+        return;
+      }
+      if (this.mode.kind === 'move') {
+        this.doMove();
+        return;
+      }
       this.pick(w.x, w.y);
     });
     this.input.on('pointerup', () => {
       this.dragWall = false;
     });
     this.input.keyboard?.on('keydown-ESC', () => this.cancelMode());
-    this.input.keyboard?.on('keydown-R', () => this.rotateGhost());
-    this.input.keyboard?.on('keydown-SPACE', () => this.setSpeed(this.speed === 0 ? 1 : 0));
+    this.input.keyboard?.on('keydown', (ev: KeyboardEvent) => {
+      const k = ev.key.toUpperCase();
+      if (k === 'R' && (this.mode.kind === 'build' || this.mode.kind === 'move')) return this.rotateGhost();
+      if (k === ' ') return this.setSpeed(this.speed === 0 ? 1 : 0);
+      const sp = SPELLS.find((x) => x.key === k);
+      if (sp) return this.startSpell(sp.id);
+      if (/^[1-9]$/.test(k)) this.ui.hotkey(Number(k) - 1);
+      if (k === 'TAB') {
+        ev.preventDefault();
+        this.ui.nextCat();
+      }
+    });
   }
 
   rotateGhost() {
+    if (this.mode.kind === 'move') {
+      const b = this.bld.get(this.mode.id);
+      if (b?.e.props.category !== 'gate') return;
+      this.mode = { ...this.mode, w: this.mode.h, h: this.mode.w };
+      return this.drawMoveGhost();
+    }
     if (this.mode.kind !== 'build') return;
     this.mode = { ...this.mode, w: this.mode.h, h: this.mode.w };
     this.drawGhost();
   }
 
   pick(wx: number, wy: number) {
+    // quái / lính (bấm vào thân)
+    const gp = grid(wx, wy + 16);
+    let bu: Unit | null = null;
+    let bd = 0.7;
+    for (const u of this.units) {
+      if (!u.alive) continue;
+      const d = dist(u.x, u.y, gp.x, gp.y) - (u.size > 1 ? 0.4 : 0);
+      if (d < bd) {
+        bd = d;
+        bu = u;
+      }
+    }
+    if (bu) return this.select({ kind: 'unit', u: bu });
     // ưu tiên công trình vẽ phía trước (theo điểm ảnh)
     const list = [...this.bld.values()].sort((a, b) => b.sprite.depth - a.sprite.depth);
     for (const b of list) {
@@ -1411,6 +1575,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   cancelMode() {
+    if (this.mode.kind === 'none' && this.selected) this.selected = null;
     this.mode = { kind: 'none' };
     this.ghost?.destroy();
     this.ghost = undefined;
@@ -1548,6 +1713,7 @@ export class GameScene extends Phaser.Scene {
     this.s.buildings.push(s);
     const b = this.addBRT(s);
     this.styleBRT(b);
+    play('build');
     this.ui.refresh(true);
     return true;
   }
@@ -1625,6 +1791,7 @@ export class GameScene extends Phaser.Scene {
     b.s.stored -= got;
     const c = this.centerOf(b);
     this.floatText(c.x, c.y, `+${got} ${get('resource', k)?.name ?? k}`, '#ffffff');
+    play('coin');
     this.updateBubble(b, false);
   }
 
@@ -1857,6 +2024,8 @@ export class GameScene extends Phaser.Scene {
       }
     }
     this.s.chests = this.s.chests.filter((x) => x.id !== id);
+    this.s.stats.chestsOpened++;
+    play('chest');
     this.ui.chestResult(e, c.level, got);
     this.persist();
     this.ui.refresh(true);
@@ -1886,9 +2055,220 @@ export class GameScene extends Phaser.Scene {
     v.img.destroy();
     this.decoMap.delete(cell);
     this.s.decorations = this.s.decorations.filter((d) => d !== v.d);
+    this.s.stats.cleared++;
+    play('coin');
     this.gridVer++;
     if (this.selected?.kind === 'deco' && this.selected.cell === cell) this.selected = null;
     this.ui.refresh(true);
+  }
+
+  /* ================= Phép ================= */
+
+  spellReady(id: string) {
+    return (this.spellCd[id] ?? 0) <= this.t;
+  }
+
+  startSpell(id: string) {
+    const sp = SPELLS.find((x) => x.id === id);
+    if (!sp) return;
+    if (this.phase !== 'battle') return this.ui.toast('Chỉ dùng phép khi đang có quái tấn công');
+    if (!this.spellReady(id)) return this.ui.toast('Phép đang hồi');
+    if (!canAfford(this.s.resources, sp.cost)) return this.ui.toast('Không đủ tài nguyên');
+    if (sp.radius) {
+      this.mode = { kind: 'spell', id };
+      this.ui.hint(`Bấm vào bản đồ để dùng ${sp.name} · Esc để huỷ`);
+      this.ui.refresh(true);
+    } else this.castSpell(id, 0, 0);
+  }
+
+  castSpell(id: string, gx: number, gy: number) {
+    const sp = SPELLS.find((x) => x.id === id)!;
+    if (!canAfford(this.s.resources, sp.cost)) return this.ui.toast('Không đủ tài nguyên');
+    pay(this.s.resources, sp.cost);
+    this.spellCd[id] = this.t + sp.cd;
+    this.s.stats.spellsCast++;
+    const enemies = this.units.filter((u) => u.team === 'enemy' && u.alive);
+    switch (id) {
+      case 'meteor': {
+        const p = iso(gx, gy);
+        const rock = this.add.circle(p.x, p.y - 400, 16, 0xff7043).setStrokeStyle(4, 0xffd54a).setDepth(950000);
+        this.tweens.add({
+          targets: rock,
+          y: p.y,
+          duration: 450,
+          onComplete: () => {
+            rock.destroy();
+            play('spell');
+            this.cameras.main.shake(250, 0.008);
+            this.ringFx(gx, gy, sp.radius!, 0xff5722);
+            this.puff(gx, gy, 0xff7043, 22);
+            for (const e of this.units)
+              if (e.team === 'enemy' && e.alive && dist(e.x, e.y, gx, gy) <= sp.radius!) {
+                if (e.ent.props.role !== 'boss') e.stunUntil = this.t + 1.5;
+                this.damage(null, e, 300, false);
+              }
+          },
+        });
+        break;
+      }
+      case 'freeze':
+        play('spell');
+        this.ringFx(gx, gy, sp.radius!, 0x80d8ff);
+        for (const e of enemies)
+          if (dist(e.x, e.y, gx, gy) <= sp.radius!) {
+            e.slowPct = 60;
+            e.slowUntil = this.t + 5;
+          }
+        break;
+      case 'heal':
+        play('skill');
+        for (const u of this.units)
+          if (u.team === 'ally' && u.alive) {
+            u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.6);
+            this.floatText(u.x, u.y, '+', '#69f0ae', 16);
+          }
+        for (const b of this.bld.values()) if (!b.s.ruined) b.hp = Math.min(b.maxHp, b.hp + b.maxHp * 0.25);
+        break;
+      case 'warcry':
+        play('horn');
+        this.warcryUntil = this.t + 12;
+        this.ui.banner('Xung phong!', 'Toàn quân +35% sát thương và tốc chạy');
+        break;
+    }
+    if (this.mode.kind === 'spell') this.mode = { kind: 'none' };
+    this.ghostG.clear();
+    this.ui.refresh(true);
+  }
+
+  drawSpellGhost(gx: number, gy: number) {
+    if (this.mode.kind !== 'spell') return;
+    const id = this.mode.id;
+    const sp = SPELLS.find((x) => x.id === id);
+    this.ghostG.clear();
+    if (sp?.radius) this.circlePath(this.ghostG, gx, gy, sp.radius, sp.id === 'freeze' ? 0x80d8ff : 0xff5722, 0.2);
+  }
+
+  /* ================= Di chuyển công trình ================= */
+
+  startMove(id: number) {
+    const b = this.bld.get(id);
+    if (!b) return;
+    if (this.phase === 'battle') return this.ui.toast('Không thể di chuyển khi đang đánh');
+    this.mode = { kind: 'move', id, w: b.s.w, h: b.s.h };
+    this.ui.hint('Bấm vào chỗ mới để chuyển công trình · R để xoay (cổng) · Esc để huỷ');
+    this.drawMoveGhost();
+    this.ui.refresh(true);
+  }
+
+  moveTarget() {
+    if (this.mode.kind !== 'move') return null;
+    const { w, h, id } = this.mode;
+    const b = this.bld.get(id)!;
+    const x = this.hover.x - Math.floor((w - 1) / 2);
+    const y = this.hover.y - Math.floor((h - 1) / 2);
+    // tạm bỏ chỗ cũ để kiểm tra
+    for (let yy = b.s.y; yy < b.s.y + b.s.h; yy++) for (let xx = b.s.x; xx < b.s.x + b.s.w; xx++) this.occ[yy * this.n + xx] = 0;
+    const err = this.placeCheck(b.e, x, y, w, h);
+    for (let yy = b.s.y; yy < b.s.y + b.s.h; yy++) for (let xx = b.s.x; xx < b.s.x + b.s.w; xx++) this.occ[yy * this.n + xx] = id;
+    return { b, x, y, w, h, err };
+  }
+
+  drawMoveGhost() {
+    const m = this.moveTarget();
+    if (!m) return;
+    const g = this.ghostG;
+    g.clear();
+    for (let yy = m.y; yy < m.y + m.h; yy++)
+      for (let xx = m.x; xx < m.x + m.w; xx++) {
+        const pts = [iso(xx, yy), iso(xx + 1, yy), iso(xx + 1, yy + 1), iso(xx, yy + 1)].map((p) => new Phaser.Math.Vector2(p.x, p.y));
+        g.fillStyle(m.err ? 0xff1744 : 0x00e676, 0.35).fillPoints(pts, true);
+      }
+    const cr = this.coverRadius(m.b) || Number(lvl(m.b.e, m.b.s.level).stats.attackRange ?? 0);
+    if (cr) this.circlePath(g, m.x + m.w / 2, m.y + m.h / 2, cr, 0x42a5f5, 0.08);
+    if (m.err) this.ui.hint(m.err);
+  }
+
+  doMove() {
+    const m = this.moveTarget();
+    if (!m) return;
+    if (m.err) return this.ui.toast(m.err);
+    const { b } = m;
+    for (let yy = b.s.y; yy < b.s.y + b.s.h; yy++) for (let xx = b.s.x; xx < b.s.x + b.s.w; xx++) this.occ[yy * this.n + xx] = 0;
+    b.s.x = m.x;
+    b.s.y = m.y;
+    b.s.w = m.w;
+    b.s.h = m.h;
+    for (let yy = b.s.y; yy < b.s.y + b.s.h; yy++) for (let xx = b.s.x; xx < b.s.x + b.s.w; xx++) this.occ[yy * this.n + xx] = b.s.id;
+    b.bubble?.destroy();
+    b.bubble = undefined;
+    this.refreshBRT(b);
+    this.gridVer++;
+    for (const u of b.soldiers) u.path = null;
+    play('build');
+    this.mode = { kind: 'none' };
+    this.ghostG.clear();
+    this.ui.refresh(true);
+  }
+
+  /** Nâng cấp mọi công trình cùng loại & cùng cấp (vd. tất cả tường) đến khi hết tài nguyên */
+  upgradeAll(id: number) {
+    const b0 = this.bld.get(id);
+    if (!b0) return;
+    let n = 0;
+    const lv = b0.s.level;
+    for (const b of this.bld.values()) {
+      if (b.s.key !== b0.s.key || b.s.level !== lv || b.s.buildLeft > 0 || b.s.ruined || b.s.level >= maxLevel(b.e)) continue;
+      const next = lvl(b.e, b.s.level + 1);
+      if (!canAfford(this.s.resources, next.cost)) break;
+      this.upgrade(b.s.id);
+      if (b.s.upgrading) n++;
+    }
+    this.ui.toast(n ? `Đang nâng cấp ${n} ${b0.e.name}` : 'Không nâng cấp được (thiếu tài nguyên hoặc cần nâng Thành chính)');
+  }
+
+  repairAll() {
+    let n = 0;
+    for (const b of this.bld.values())
+      if (b.s.ruined && canAfford(this.s.resources, this.repairCost(b)) && (this.phase !== 'battle' || b.e.props.category === 'wall')) {
+        this.repair(b.s.id);
+        n++;
+      }
+    this.ui.toast(n ? `Đã sửa ${n} công trình` : 'Không có gì để sửa hoặc không đủ tài nguyên');
+  }
+
+  ruinedCount() {
+    let n = 0;
+    for (const b of this.bld.values()) if (b.s.ruined) n++;
+    return n;
+  }
+
+  /* ================= Nhiệm vụ ================= */
+
+  claimQuest(id: string) {
+    const q = QUESTS.find((x) => x.id === id);
+    if (!q || this.s.quests.includes(id) || q.progress(this) < q.target) return;
+    this.s.quests.push(id);
+    for (const [k, v] of Object.entries(q.reward)) {
+      const [kind, key] = k.split(':');
+      if (kind === 'resource') this.s.resources[key] = Math.min(resourceCap(key, this.s.buildings), (this.s.resources[key] ?? 0) + v);
+      else if (kind === 'chest' && get('chest', key)) for (let i = 0; i < v; i++) this.s.chests.push({ id: this.s.nextId++, key, level: 1, unlockLeft: null });
+    }
+    play('chest');
+    this.ui.toast(`Hoàn thành: ${q.text}`);
+    this.persist();
+    this.ui.refresh(true);
+  }
+
+  /* ================= Hiệu ứng khói ================= */
+
+  puff(x: number, y: number, color: number, count = 7) {
+    const p = iso(x, y);
+    for (let i = 0; i < count; i++) {
+      const c = this.add.circle(p.x, p.y - 12, 3 + Math.random() * 4, color, 0.9).setDepth(940000);
+      const a = Math.random() * Math.PI * 2;
+      const d = 10 + Math.random() * 18;
+      this.tweens.add({ targets: c, x: p.x + Math.cos(a) * d, y: p.y - 12 + Math.sin(a) * d * 0.5 - 10, alpha: 0, scale: 0.3, duration: 450 + Math.random() * 250, onComplete: () => c.destroy() });
+    }
   }
 
   /* ================= Lưu / tải ================= */
@@ -1913,9 +2293,9 @@ export class GameScene extends Phaser.Scene {
     if (this.phase === 'build') this.startWave();
   }
 
-  newGame() {
+  newGame(difficulty = this.s?.difficulty ?? 1) {
     clearSave();
-    this.s = newState();
+    this.s = newState(undefined, difficulty);
     this.restart();
   }
 
@@ -1930,6 +2310,8 @@ export class GameScene extends Phaser.Scene {
   restart() {
     this.phase = 'build';
     this.spawnQueue = [];
+    this.spellCd = {};
+    this.warcryUntil = 0;
     this.selected = null;
     this.mode = { kind: 'none' };
     this.ghost?.destroy();

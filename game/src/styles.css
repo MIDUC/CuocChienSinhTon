@@ -133,3 +133,33 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #1d3b2a; fon
   .cols { grid-template-columns: 1fr; }
   .res { min-width: 70px; }
 }
+
+/* phép */
+.spells { position: absolute; right: 8px; bottom: 6px; display: flex; gap: 6px; align-items: flex-end; background: #0d1520e6; border: 1px solid #2c3e55; border-radius: 14px; padding: 6px; }
+.spells .ttl { writing-mode: vertical-rl; transform: rotate(180deg); color: #ffd54a; font-weight: 700; font-size: 12px; }
+.spells .ttl small { color: #8fa0b3; font-weight: 400; }
+.spells.dim .spell { opacity: 0.45; }
+.spell { position: relative; width: 62px; height: 66px; background: #1c2838; border: 2px solid #3d5470; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+.spell:hover { border-color: #ffd54a; }
+.spell.on { border-color: #ff7043; box-shadow: 0 0 12px #ff7043; }
+.spell .ic { font-size: 26px; }
+.spell small { font-size: 10px; }
+.spell .cd { position: absolute; inset: 0; background: #000a; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 20px; font-weight: 800; }
+.spell kbd { position: absolute; top: 1px; left: 4px; font-size: 9px; color: #8fa0b3; }
+.badge { background: #c62828; border-radius: 9px; padding: 0 6px; margin-left: 2px; }
+.preview { font-size: 12px; color: #ffcdd2; background: #3a1616cc; border-radius: 8px; padding: 2px 8px; max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tag.gold { background: #b28704; }
+.hp.red i { background: #e53935; }
+.quests { display: flex; flex-direction: column; gap: 6px; }
+.quest { display: flex; gap: 10px; align-items: center; background: #1a2636; border-radius: 10px; padding: 7px 10px; }
+.quest > div:first-child { flex: 1; }
+.quest.done { opacity: 0.5; }
+.quest.ready { border: 1px solid #ffd54a; box-shadow: 0 0 8px #ffd54a55; }
+.diffs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0; }
+.diff { background: #1a2636; border: 2px solid #34465e; border-radius: 12px; padding: 14px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; text-align: center; }
+.diff:hover { border-color: #ffd54a; }
+.diff b { font-size: 18px; }
+.diff small { color: #b9c3cf; }
+@media (max-width: 1100px) { .preview { display: none; } }
+@media (max-width: 900px) { .spells { bottom: auto; top: 62px; right: 8px; flex-direction: column; } .spells .ttl { display: none; } .spell { width: 48px; height: 52px; } }
+@media (max-width: 1250px) and (min-width: 901px) { .buildbar { left: 8px; transform: none; max-width: calc(100vw - 340px); } }

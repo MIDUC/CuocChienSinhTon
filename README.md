@@ -2,13 +2,37 @@
 
 Game chiến thuật thủ thành trên bản đồ lưới ô vuông (hiển thị 2D isometric, góc nhìn cố định), chơi trên web và app.
 
-Phần đã có: **server + database + trang admin** để quản lý toàn bộ dữ liệu và hình ảnh game (công trình, lính & tướng, quái, tài nguyên, rương, địa hình, cây & vật trang trí, cổ vật, trang bị), mỗi loại có nhiều cấp, mỗi cấp có chỉ số và ảnh riêng.
+Phần đã có: **game chơi được (Phaser, thư mục `game/`)** + **server + database + trang admin** để quản lý toàn bộ dữ liệu và hình ảnh game (công trình, lính & tướng, quái, tài nguyên, rương, địa hình, cây & vật trang trí, cổ vật, trang bị), mỗi loại có nhiều cấp, mỗi cấp có chỉ số và ảnh riêng.
+
+## Chơi game
+
+```bash
+npm install
+npm run dev:game        # mở http://localhost:5174
+```
+
+Game tự lấy dữ liệu từ server (`/api/game-data`, gồm ảnh đã upload trên admin) nếu server đang chạy; không có server thì dùng luôn các file JSON trong `data/`. Tiến trình lưu trong trình duyệt (localStorage). Máy không chạy được WebGL thì game tự chuyển sang Canvas (hoặc mở `?canvas`).
+
+Lối chơi:
+- Bản đồ lưới ô vuông xoay isometric, camera cố định nhìn toàn bản đồ. Thành chính ở giữa, quái tới từ các cổng đỏ ở mép.
+- Mỗi đợt có thời gian chuẩn bị (đếm ngược, hoặc bấm *Gọi quái ngay*). Hết quái = thắng đợt, nhận rương. Thành chính bị phá = thua (chơi lại đợt hoặc lập thành mới).
+- Xây công trình từ thanh dưới: tường kéo chuột để xây dãy, cổng nhấn R để xoay, Shift để đặt nhiều. Nâng cấp / dỡ / sửa ở bảng bên phải.
+- Nhà lính bao phủ một vùng: quái vào vùng thì lính chạy ra; cận chiến đứng chặn, cung thủ bắn xa (đứng trên tường được cộng tầm, sát thương). Sát thương = công − giáp (tối thiểu 10% công) + hiệu ứng cổ vật/trang bị.
+- Lính chết là mất: tạo lại ở nhà bằng tài nguyên (`trainCost`) hoặc dùng lính dự bị nhận từ rương. Điểm đóng quân chọn trong vùng bao phủ (tướng: mọi nơi trong lãnh thổ).
+- Nhà tướng sinh 1 tướng: hào quang tăng sát thương lính quanh tướng, tuyệt kỹ theo thời gian hồi.
+- Quái đi vòng qua tường, chỉ phá tường khi không còn lối; không đi qua cổng. Dơi bay thẳng.
+- Kinh tế: mỏ/nông trại/xưởng gỗ sản xuất, bấm để thu hoạch; Nhà kho + Thành chính tăng sức chứa; bấm cây/đá để dọn lấy tài nguyên.
+- Kho báu: mua/nâng cấp cổ vật, trang bị và gắn vào ô của nhà lính (ô cổ vật mở theo cấp nhà). Điểm cộng phân vào chỉ số.
+
+Các hệ số rút ngắn thời gian (xây, tạo lính, mở rương…) ở `game/src/state.ts` (`CFG`).
+Bản build: `npm run build` → server phục vụ game tại `http://localhost:3000/game/`.
 
 ## Cấu trúc
 
 ```
 server/   NestJS + Prisma + PostgreSQL — API dữ liệu game, upload ảnh, sinh prompt vẽ ảnh, ảnh SVG tạm
 admin/    Trang admin (React + Vite), chạy ở /admin
+game/     Game (Phaser 3 + Vite), chạy ở /game
 data/     Dữ liệu game dạng file: mỗi thực thể 1 file JSON
   buildings/  troops/  monsters/  resources/  chests/  terrains/  decorations/  artifacts/  equipments/
   art-style.json   phong cách chung để sinh prompt vẽ ảnh

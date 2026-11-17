@@ -6,5 +6,7 @@ export const REPO_ROOT = resolve(__dirname, '..', '..', '..');
 export const ASSETS_DIR = process.env.ASSETS_DIR ? resolve(process.env.ASSETS_DIR) : resolve(REPO_ROOT, 'assets');
 /** File JSON dữ liệu game — <repo>/data/<thư mục loại>/<key>.json */
 export const DATA_DIR = resolve(REPO_ROOT, 'data');
+/** Bản build của game (npm run build -w game) */
+export const GAME_DIST = resolve(REPO_ROOT, 'game', 'dist');
 /** Bản build của trang admin */
 export const ADMIN_DIST = resolve(REPO_ROOT, 'admin', 'dist');

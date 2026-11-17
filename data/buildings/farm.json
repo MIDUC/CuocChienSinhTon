@@ -1,0 +1,60 @@
+{
+  "key": "farm",
+  "type": "building",
+  "name": "Nông trại",
+  "description": "Sản xuất lương thực nuôi quân.",
+  "artSubject": "a farm with golden wheat fields, hay bales and a small barn",
+  "props": {
+    "category": "economy",
+    "size": 2,
+    "produces": "food",
+    "maxCount": 6
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 400,
+        "production": 250,
+        "capacity": 1200,
+        "buildTimeSec": 15
+      },
+      "cost": {
+        "gold": 80,
+        "wood": 80
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 800,
+        "production": 500,
+        "capacity": 2400,
+        "buildTimeSec": 30
+      },
+      "cost": {
+        "gold": 320,
+        "wood": 320
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 1200,
+        "production": 750,
+        "capacity": 3600,
+        "buildTimeSec": 45
+      },
+      "cost": {
+        "gold": 720,
+        "wood": 720
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

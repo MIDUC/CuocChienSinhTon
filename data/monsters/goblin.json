@@ -1,0 +1,59 @@
+{
+  "key": "goblin",
+  "type": "monster",
+  "name": "Yêu tinh",
+  "description": "Quái nhỏ, nhanh, đi theo bầy.",
+  "artSubject": "a small green goblin with a rusty dagger",
+  "props": {
+    "role": "melee",
+    "target": "nearest",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 60,
+        "damage": 9,
+        "armor": 0,
+        "attackRange": 1,
+        "attackSpeed": 1.2,
+        "moveSpeed": 2,
+        "goldDrop": 5
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "ragged loincloth"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 120,
+        "damage": 12,
+        "armor": 1,
+        "attackRange": 1,
+        "attackSpeed": 1.2,
+        "moveSpeed": 2,
+        "goldDrop": 10
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "leather scraps and wooden shield"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 180,
+        "damage": 15,
+        "armor": 2,
+        "attackRange": 1,
+        "attackSpeed": 1.2,
+        "moveSpeed": 2,
+        "goldDrop": 15
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "spiked dark armor, glowing red eyes"
+    }
+  ]
+}

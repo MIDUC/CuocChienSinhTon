@@ -1,0 +1,60 @@
+{
+  "key": "stone_quarry",
+  "type": "building",
+  "name": "Mỏ đá",
+  "description": "Khai thác đá.",
+  "artSubject": "a stone quarry with grey boulders, a wooden crane and cut stone blocks",
+  "props": {
+    "category": "economy",
+    "size": 2,
+    "produces": "stone",
+    "maxCount": 3
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 600,
+        "production": 150,
+        "capacity": 800,
+        "buildTimeSec": 25
+      },
+      "cost": {
+        "gold": 150,
+        "wood": 100
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1200,
+        "production": 300,
+        "capacity": 1600,
+        "buildTimeSec": 50
+      },
+      "cost": {
+        "gold": 600,
+        "wood": 400
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 1800,
+        "production": 450,
+        "capacity": 2400,
+        "buildTimeSec": 75
+      },
+      "cost": {
+        "gold": 1350,
+        "wood": 900
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

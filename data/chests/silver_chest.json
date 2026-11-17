@@ -1,0 +1,124 @@
+{
+  "key": "silver_chest",
+  "type": "chest",
+  "name": "Rương bạc",
+  "description": "Phần thưởng khi hạ boss hoặc hoàn thành nhiệm vụ.",
+  "artSubject": "an ornate silver treasure chest with blue gem inlays",
+  "props": {
+    "rarity": "rare",
+    "source": "boss"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "unlockTimeSec": 1800,
+        "gemSkipCost": 20,
+        "rolls": 4
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "silver with small blue gem",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 500,
+          "max": 1200,
+          "chance": 1
+        },
+        {
+          "item": "resource:stone",
+          "min": 200,
+          "max": 600,
+          "chance": 0.8
+        },
+        {
+          "item": "troop:archer",
+          "min": 1,
+          "max": 2,
+          "chance": 0.5
+        },
+        {
+          "item": "resource:gem",
+          "min": 1,
+          "max": 3,
+          "chance": 0.2
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "stats": {
+        "unlockTimeSec": 3600,
+        "gemSkipCost": 40,
+        "rolls": 5
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "silver with several glowing blue gems",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 1000,
+          "max": 2400,
+          "chance": 1
+        },
+        {
+          "item": "resource:stone",
+          "min": 400,
+          "max": 1200,
+          "chance": 0.8
+        },
+        {
+          "item": "troop:archer",
+          "min": 1,
+          "max": 4,
+          "chance": 0.5
+        },
+        {
+          "item": "resource:gem",
+          "min": 1,
+          "max": 6,
+          "chance": 0.2
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "stats": {
+        "unlockTimeSec": 5400,
+        "gemSkipCost": 60,
+        "rolls": 6
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "brilliant silver with large glowing sapphires",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 1500,
+          "max": 3600,
+          "chance": 1
+        },
+        {
+          "item": "resource:stone",
+          "min": 600,
+          "max": 1800,
+          "chance": 0.8
+        },
+        {
+          "item": "troop:archer",
+          "min": 1,
+          "max": 6,
+          "chance": 0.5
+        },
+        {
+          "item": "resource:gem",
+          "min": 1,
+          "max": 9,
+          "chance": 0.2
+        }
+      ]
+    }
+  ]
+}

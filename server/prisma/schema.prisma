@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EntityType {
+  building
+  troop
+  general
+  monster
+  resource
+  chest
+}
+
+/// Mỗi công trình / loại lính / tướng / quái / tài nguyên / rương là MỘT bản ghi JSON riêng.
+/// Toàn bộ nội dung (thông tin, thuộc tính, các cấp, chỉ số, ảnh) nằm trong cột `data` (JSONB).
+/// Các cột type/key/name chỉ là bản sao để tìm kiếm và đảm bảo không trùng key.
+model GameEntity {
+  id        String     @id @default(cuid())
+  type      EntityType
+  key       String
+  name      String
+  data      Json
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([type, key])
+  @@index([type])
+}
+
+/// Cấu hình chung dạng JSON, ví dụ key "artStyle" = phong cách dùng để sinh prompt vẽ ảnh.
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,89 @@
+{
+  "key": "town_hall",
+  "type": "building",
+  "name": "Thành chính",
+  "description": "Trung tâm của thành trì. Mất thành chính là thua. Cấp thành chính mở khoá cấp tối đa của các công trình khác.",
+  "artSubject": "a medieval castle keep with towers, the heart of the city",
+  "props": {
+    "category": "core",
+    "size": 3,
+    "maxCount": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 3000,
+        "capacity": 2000,
+        "buildTimeSec": 60
+      },
+      "cost": {
+        "gold": 0,
+        "wood": 0,
+        "stone": 0
+      },
+      "image": null,
+      "artNote": "small wooden keep with palisade"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 4500,
+        "capacity": 3000,
+        "buildTimeSec": 90
+      },
+      "cost": {
+        "gold": 2400,
+        "wood": 2000,
+        "stone": 1200
+      },
+      "image": null,
+      "artNote": "stone keep with one tower, blue roof"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 6750,
+        "capacity": 4500,
+        "buildTimeSec": 135
+      },
+      "cost": {
+        "gold": 5400,
+        "wood": 4500,
+        "stone": 2700
+      },
+      "image": null,
+      "artNote": "stone castle with two towers and walls, blue roofs, flags"
+    },
+    {
+      "level": 4,
+      "stats": {
+        "hp": 10125,
+        "capacity": 6750,
+        "buildTimeSec": 202
+      },
+      "cost": {
+        "gold": 9600,
+        "wood": 8000,
+        "stone": 4800
+      },
+      "image": null,
+      "artNote": "large grey stone castle with four towers, blue roofs, golden flags"
+    },
+    {
+      "level": 5,
+      "stats": {
+        "hp": 15188,
+        "capacity": 10125,
+        "buildTimeSec": 304
+      },
+      "cost": {
+        "gold": 15000,
+        "wood": 12500,
+        "stone": 7500
+      },
+      "image": null,
+      "artNote": "grand fortress castle with many towers, gold trims, glowing windows, huge banners"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "key": "wolf",
+  "type": "monster",
+  "name": "Sói hoang",
+  "description": "Chạy rất nhanh, máu thấp.",
+  "artSubject": "a wild grey wolf, snarling, low to the ground",
+  "props": {
+    "role": "melee",
+    "target": "nearest",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 80,
+        "damage": 14,
+        "armor": 0,
+        "attackRange": 1,
+        "attackSpeed": 1.5,
+        "moveSpeed": 3,
+        "goldDrop": 6
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "grey fur"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 160,
+        "damage": 18,
+        "armor": 0,
+        "attackRange": 1,
+        "attackSpeed": 1.5,
+        "moveSpeed": 3,
+        "goldDrop": 12
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "dark fur with scars"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 240,
+        "damage": 22,
+        "armor": 0,
+        "attackRange": 1,
+        "attackSpeed": 1.5,
+        "moveSpeed": 3,
+        "goldDrop": 18
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "shadow wolf with glowing blue eyes and smoky aura"
+    }
+  ]
+}

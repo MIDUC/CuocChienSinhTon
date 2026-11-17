@@ -1,0 +1,37 @@
+{
+  "key": "food",
+  "type": "resource",
+  "name": "Lương thực",
+  "description": "Nuôi quân, huấn luyện lính.",
+  "artSubject": "wheat sacks, bread and apples",
+  "props": {
+    "rarity": "common",
+    "color": "#e8b04b"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "startAmount": 800,
+        "baseCapacity": 5000
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "a small amount"
+    },
+    {
+      "level": 2,
+      "stats": {},
+      "cost": {},
+      "image": null,
+      "artNote": "a medium pile"
+    },
+    {
+      "level": 3,
+      "stats": {},
+      "cost": {},
+      "image": null,
+      "artNote": "a large overflowing pile"
+    }
+  ]
+}

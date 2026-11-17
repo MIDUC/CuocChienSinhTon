@@ -1,0 +1,6 @@
+{
+  "style": "isometric 2D game asset for a medieval fantasy strategy / city-builder game, stylized low-poly 3D render look, bright saturated colors, lush green grass, soft warm sunlight from the top-left, soft ambient occlusion, clean readable silhouette, chunky toy-like proportions, fixed isometric camera (45° rotation, ~30° elevation), single object centered, fully visible, consistent scale and perspective across the whole asset set, isolated on a plain solid white background",
+  "negative": "text, letters, watermark, logo, UI, frame, border, cropped, cut off, multiple objects, background scenery, perspective camera, top-down view, side view, photorealistic, blurry, noisy, dark, gritty, hexagon tiles",
+  "midjourneyParams": "--style raw --s 150 --v 6.1",
+  "tileWidth": 128
+}

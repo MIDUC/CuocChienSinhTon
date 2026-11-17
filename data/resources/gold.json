@@ -1,0 +1,37 @@
+{
+  "key": "gold",
+  "type": "resource",
+  "name": "Vàng",
+  "description": "Dùng để xây, nâng cấp và huấn luyện lính.",
+  "artSubject": "shiny gold coins",
+  "props": {
+    "rarity": "common",
+    "color": "#f5c542"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "startAmount": 1000,
+        "baseCapacity": 5000
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "a small amount"
+    },
+    {
+      "level": 2,
+      "stats": {},
+      "cost": {},
+      "image": null,
+      "artNote": "a medium pile"
+    },
+    {
+      "level": 3,
+      "stats": {},
+      "cost": {},
+      "image": null,
+      "artNote": "a large overflowing pile"
+    }
+  ]
+}

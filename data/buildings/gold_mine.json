@@ -1,0 +1,57 @@
+{
+  "key": "gold_mine",
+  "type": "building",
+  "name": "Mỏ vàng",
+  "description": "Khai thác vàng theo thời gian.",
+  "artSubject": "a gold mine entrance in a rocky hill with mine cart rails and gold ore piles",
+  "props": {
+    "category": "economy",
+    "size": 2,
+    "produces": "gold",
+    "maxCount": 4
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 500,
+        "production": 200,
+        "capacity": 1000,
+        "buildTimeSec": 20
+      },
+      "cost": {
+        "wood": 150
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1000,
+        "production": 400,
+        "capacity": 2000,
+        "buildTimeSec": 40
+      },
+      "cost": {
+        "wood": 600
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 1500,
+        "production": 600,
+        "capacity": 3000,
+        "buildTimeSec": 60
+      },
+      "cost": {
+        "wood": 1350
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

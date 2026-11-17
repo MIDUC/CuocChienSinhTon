@@ -1,0 +1,106 @@
+{
+  "key": "wooden_chest",
+  "type": "chest",
+  "name": "Rương gỗ",
+  "description": "Rơi ra sau mỗi đợt quái.",
+  "artSubject": "a sturdy wooden treasure chest with iron bands",
+  "props": {
+    "rarity": "common",
+    "source": "wave"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "unlockTimeSec": 300,
+        "gemSkipCost": 5,
+        "rolls": 3
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "plain wood",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 100,
+          "max": 300,
+          "chance": 1
+        },
+        {
+          "item": "resource:wood",
+          "min": 100,
+          "max": 300,
+          "chance": 0.8
+        },
+        {
+          "item": "troop:swordsman",
+          "min": 1,
+          "max": 1,
+          "chance": 0.3
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "stats": {
+        "unlockTimeSec": 600,
+        "gemSkipCost": 10,
+        "rolls": 4
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "darker wood with more iron",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 200,
+          "max": 600,
+          "chance": 1
+        },
+        {
+          "item": "resource:wood",
+          "min": 200,
+          "max": 600,
+          "chance": 0.8
+        },
+        {
+          "item": "troop:swordsman",
+          "min": 1,
+          "max": 2,
+          "chance": 0.3
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "stats": {
+        "unlockTimeSec": 900,
+        "gemSkipCost": 15,
+        "rolls": 5
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "polished wood with brass corners",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 300,
+          "max": 900,
+          "chance": 1
+        },
+        {
+          "item": "resource:wood",
+          "min": 300,
+          "max": 900,
+          "chance": 0.8
+        },
+        {
+          "item": "troop:swordsman",
+          "min": 1,
+          "max": 3,
+          "chance": 0.3
+        }
+      ]
+    }
+  ]
+}

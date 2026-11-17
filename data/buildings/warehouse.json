@@ -1,0 +1,56 @@
+{
+  "key": "warehouse",
+  "type": "building",
+  "name": "Nhà kho",
+  "description": "Tăng sức chứa tài nguyên.",
+  "artSubject": "a storage warehouse with crates, barrels and sacks",
+  "props": {
+    "category": "storage",
+    "size": 2,
+    "maxCount": 3
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 800,
+        "capacity": 3000,
+        "buildTimeSec": 30
+      },
+      "cost": {
+        "gold": 200,
+        "wood": 300
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1600,
+        "capacity": 12000,
+        "buildTimeSec": 60
+      },
+      "cost": {
+        "gold": 800,
+        "wood": 1200
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 2400,
+        "capacity": 27000,
+        "buildTimeSec": 90
+      },
+      "cost": {
+        "gold": 1800,
+        "wood": 2700
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

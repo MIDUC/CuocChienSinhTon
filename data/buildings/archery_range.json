@@ -1,0 +1,63 @@
+{
+  "key": "archery_range",
+  "type": "building",
+  "name": "Trường bắn cung",
+  "description": "Nhà lính cung thủ: bao phủ vùng rộng hơn, cung thủ đứng xa bắn quái trong vùng.",
+  "artSubject": "an archery range with straw targets and a wooden lookout platform",
+  "props": {
+    "category": "military",
+    "size": 2,
+    "spawns": "archer",
+    "maxCount": 4
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 700,
+        "coverRadius": 4,
+        "troopCount": 2,
+        "respawnSec": 22,
+        "buildTimeSec": 40
+      },
+      "cost": {
+        "gold": 200,
+        "wood": 250
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1400,
+        "coverRadius": 5,
+        "troopCount": 3,
+        "respawnSec": 19,
+        "buildTimeSec": 80
+      },
+      "cost": {
+        "gold": 800,
+        "wood": 1000
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 2100,
+        "coverRadius": 5,
+        "troopCount": 4,
+        "respawnSec": 16,
+        "buildTimeSec": 120
+      },
+      "cost": {
+        "gold": 1800,
+        "wood": 2250
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

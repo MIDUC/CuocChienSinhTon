@@ -1,0 +1,61 @@
+{
+  "key": "spearman",
+  "type": "troop",
+  "name": "Thương binh",
+  "description": "Lính giữ trận, giáp dày, chặn quái.",
+  "artSubject": "a heavy spearman with a long spear and tower shield",
+  "props": {
+    "role": "tank",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 200,
+        "damage": 13,
+        "armor": 5,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      },
+      "cost": {
+        "gold": 400
+      },
+      "image": null,
+      "artNote": "leather and cloth armor, wooden shield"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 400,
+        "damage": 17,
+        "armor": 10,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      },
+      "cost": {
+        "gold": 1600
+      },
+      "image": null,
+      "artNote": "chainmail with blue tabard, iron helmet"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 600,
+        "damage": 21,
+        "armor": 15,
+        "attackRange": 1.5,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.2
+      },
+      "cost": {
+        "gold": 3600
+      },
+      "image": null,
+      "artNote": "shiny plate armor with gold trims and blue cape"
+    }
+  ]
+}

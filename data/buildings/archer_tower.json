@@ -1,0 +1,65 @@
+{
+  "key": "archer_tower",
+  "type": "building",
+  "name": "Tháp cung",
+  "description": "Tháp phòng thủ tự bắn quái trong tầm.",
+  "artSubject": "a tall defensive archer tower with a pointed roof and arrow slits",
+  "props": {
+    "category": "defense",
+    "size": 1,
+    "maxCount": 8
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 600,
+        "damage": 28,
+        "attackRange": 4,
+        "attackSpeed": 0.95,
+        "buildTimeSec": 25
+      },
+      "cost": {
+        "gold": 120,
+        "wood": 150,
+        "stone": 60
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1200,
+        "damage": 38,
+        "attackRange": 5,
+        "attackSpeed": 1.1,
+        "buildTimeSec": 50
+      },
+      "cost": {
+        "gold": 480,
+        "wood": 600,
+        "stone": 240
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 1800,
+        "damage": 48,
+        "attackRange": 5,
+        "attackSpeed": 1.25,
+        "buildTimeSec": 75
+      },
+      "cost": {
+        "gold": 1080,
+        "wood": 1350,
+        "stone": 540
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

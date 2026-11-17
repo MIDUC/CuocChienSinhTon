@@ -1,0 +1,59 @@
+{
+  "key": "troll_king",
+  "type": "monster",
+  "name": "Vua Quỷ Khổng Lồ",
+  "description": "Boss cuối đợt: cực trâu, đập tường.",
+  "artSubject": "a gigantic troll king boss with a crown and a stone hammer",
+  "props": {
+    "role": "boss",
+    "target": "walls",
+    "size": 2
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 3000,
+        "damage": 120,
+        "armor": 15,
+        "attackRange": 1.5,
+        "attackSpeed": 0.5,
+        "moveSpeed": 0.8,
+        "goldDrop": 300
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "mossy skin, wooden crown"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 6000,
+        "damage": 160,
+        "armor": 30,
+        "attackRange": 1.5,
+        "attackSpeed": 0.5,
+        "moveSpeed": 0.8,
+        "goldDrop": 600
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "stone armor plates, iron crown"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 9000,
+        "damage": 200,
+        "armor": 45,
+        "attackRange": 1.5,
+        "attackSpeed": 0.5,
+        "moveSpeed": 0.8,
+        "goldDrop": 900
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "lava cracks glowing on the skin, flaming golden crown"
+    }
+  ]
+}

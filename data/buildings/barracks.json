@@ -1,0 +1,63 @@
+{
+  "key": "barracks",
+  "type": "building",
+  "name": "Nhà lính",
+  "description": "Đặt ở 1 ô, bao phủ một vùng xung quanh. Khi quái đi vào vùng bao phủ, lính trong nhà sẽ chạy ra đánh, chết thì hồi sinh sau một thời gian.",
+  "artSubject": "a military barracks with training dummies, weapon racks and a small fenced yard",
+  "props": {
+    "category": "military",
+    "size": 2,
+    "spawns": "swordsman",
+    "maxCount": 6
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 900,
+        "coverRadius": 3,
+        "troopCount": 3,
+        "respawnSec": 19,
+        "buildTimeSec": 30
+      },
+      "cost": {
+        "gold": 150,
+        "wood": 200
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1800,
+        "coverRadius": 4,
+        "troopCount": 4,
+        "respawnSec": 16,
+        "buildTimeSec": 60
+      },
+      "cost": {
+        "gold": 600,
+        "wood": 800
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 2700,
+        "coverRadius": 4,
+        "troopCount": 5,
+        "respawnSec": 13,
+        "buildTimeSec": 90
+      },
+      "cost": {
+        "gold": 1350,
+        "wood": 1800
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

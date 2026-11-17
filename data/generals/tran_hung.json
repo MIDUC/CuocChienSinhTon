@@ -1,0 +1,71 @@
+{
+  "key": "tran_hung",
+  "type": "general",
+  "name": "Trấn Hùng",
+  "description": "Tướng cận chiến, hào quang tăng sát thương cho lính xung quanh.",
+  "artSubject": "a heroic warrior general with a big two-handed sword and a flowing red cape",
+  "props": {
+    "role": "melee",
+    "skill": "Hống Lôi Trảm — chém lan đẩy lùi quái",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 900,
+        "damage": 65,
+        "armor": 8,
+        "attackRange": 1.5,
+        "attackSpeed": 1.1,
+        "moveSpeed": 1.6,
+        "auraRadius": 3,
+        "auraBonusPct": 10,
+        "skillCooldownSec": 18
+      },
+      "cost": {
+        "gold": 2000
+      },
+      "image": null,
+      "artNote": "steel armor and red cape"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1800,
+        "damage": 85,
+        "armor": 16,
+        "attackRange": 1.5,
+        "attackSpeed": 1.1,
+        "moveSpeed": 1.6,
+        "auraRadius": 3,
+        "auraBonusPct": 20,
+        "skillCooldownSec": 16
+      },
+      "cost": {
+        "gold": 8000
+      },
+      "image": null,
+      "artNote": "ornate steel armor with gold trims, horned helmet"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 2700,
+        "damage": 105,
+        "armor": 24,
+        "attackRange": 1.5,
+        "attackSpeed": 1.1,
+        "moveSpeed": 1.6,
+        "auraRadius": 3,
+        "auraBonusPct": 30,
+        "skillCooldownSec": 14
+      },
+      "cost": {
+        "gold": 18000
+      },
+      "image": null,
+      "artNote": "legendary golden armor glowing faintly, majestic red cape"
+    }
+  ]
+}

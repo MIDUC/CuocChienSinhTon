@@ -1,0 +1,63 @@
+{
+  "key": "general_hall",
+  "type": "building",
+  "name": "Nhà tướng",
+  "description": "Nơi tướng trú đóng. Bao phủ vùng rộng; quái vào vùng thì tướng xuất trận và tăng sức mạnh cho lính xung quanh.",
+  "artSubject": "a grand commander's hall with a war banner, armor stand and a map table outside",
+  "props": {
+    "category": "military",
+    "size": 2,
+    "spawns": "tran_hung",
+    "maxCount": 2
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 1500,
+        "coverRadius": 5,
+        "troopCount": 1,
+        "respawnSec": 50,
+        "buildTimeSec": 120
+      },
+      "cost": {
+        "gold": 800,
+        "stone": 500
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 3000,
+        "coverRadius": 6,
+        "troopCount": 1,
+        "respawnSec": 40,
+        "buildTimeSec": 240
+      },
+      "cost": {
+        "gold": 3200,
+        "stone": 2000
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 4500,
+        "coverRadius": 6,
+        "troopCount": 1,
+        "respawnSec": 30,
+        "buildTimeSec": 360
+      },
+      "cost": {
+        "gold": 7200,
+        "stone": 4500
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

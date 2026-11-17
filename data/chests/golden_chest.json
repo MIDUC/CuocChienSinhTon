@@ -1,0 +1,142 @@
+{
+  "key": "golden_chest",
+  "type": "chest",
+  "name": "Rương vàng",
+  "description": "Rương hiếm, có cơ hội nhận tướng.",
+  "artSubject": "a magnificent golden treasure chest with red rubies and magical glow",
+  "props": {
+    "rarity": "legendary",
+    "source": "shop"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "unlockTimeSec": 7200,
+        "gemSkipCost": 60,
+        "rolls": 5
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "gold with a few rubies",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 2000,
+          "max": 5000,
+          "chance": 1
+        },
+        {
+          "item": "resource:gem",
+          "min": 5,
+          "max": 15,
+          "chance": 0.7
+        },
+        {
+          "item": "troop:spearman",
+          "min": 2,
+          "max": 3,
+          "chance": 0.6
+        },
+        {
+          "item": "general:tran_hung",
+          "min": 1,
+          "max": 1,
+          "chance": 0.05
+        },
+        {
+          "item": "general:lan_anh",
+          "min": 1,
+          "max": 1,
+          "chance": 0.05
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "stats": {
+        "unlockTimeSec": 14400,
+        "gemSkipCost": 120,
+        "rolls": 6
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "gold with many rubies and soft golden glow",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 4000,
+          "max": 10000,
+          "chance": 1
+        },
+        {
+          "item": "resource:gem",
+          "min": 10,
+          "max": 30,
+          "chance": 0.7
+        },
+        {
+          "item": "troop:spearman",
+          "min": 2,
+          "max": 6,
+          "chance": 0.6
+        },
+        {
+          "item": "general:tran_hung",
+          "min": 1,
+          "max": 1,
+          "chance": 0.1
+        },
+        {
+          "item": "general:lan_anh",
+          "min": 1,
+          "max": 1,
+          "chance": 0.1
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "stats": {
+        "unlockTimeSec": 21600,
+        "gemSkipCost": 180,
+        "rolls": 7
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "radiant gold with giant rubies, sparkles and strong magical aura",
+      "rewards": [
+        {
+          "item": "resource:gold",
+          "min": 6000,
+          "max": 15000,
+          "chance": 1
+        },
+        {
+          "item": "resource:gem",
+          "min": 15,
+          "max": 45,
+          "chance": 0.7
+        },
+        {
+          "item": "troop:spearman",
+          "min": 2,
+          "max": 9,
+          "chance": 0.6
+        },
+        {
+          "item": "general:tran_hung",
+          "min": 1,
+          "max": 1,
+          "chance": 0.15000000000000002
+        },
+        {
+          "item": "general:lan_anh",
+          "min": 1,
+          "max": 1,
+          "chance": 0.15000000000000002
+        }
+      ]
+    }
+  ]
+}

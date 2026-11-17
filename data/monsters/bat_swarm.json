@@ -1,0 +1,59 @@
+{
+  "key": "bat_swarm",
+  "type": "monster",
+  "name": "Dơi quỷ",
+  "description": "Quái bay, bỏ qua tường thành.",
+  "artSubject": "a giant purple demon bat flying with wings spread",
+  "props": {
+    "role": "flying",
+    "target": "core",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 50,
+        "damage": 12,
+        "armor": 0,
+        "attackRange": 1,
+        "attackSpeed": 1.3,
+        "moveSpeed": 2.4,
+        "goldDrop": 8
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "small purple bat"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 100,
+        "damage": 16,
+        "armor": 0,
+        "attackRange": 1,
+        "attackSpeed": 1.3,
+        "moveSpeed": 2.4,
+        "goldDrop": 16
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "larger bat with torn wings"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 150,
+        "damage": 20,
+        "armor": 0,
+        "attackRange": 1,
+        "attackSpeed": 1.3,
+        "moveSpeed": 2.4,
+        "goldDrop": 24
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "huge vampire bat with glowing red eyes"
+    }
+  ]
+}

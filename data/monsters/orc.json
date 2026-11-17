@@ -1,0 +1,59 @@
+{
+  "key": "orc",
+  "type": "monster",
+  "name": "Quỷ đầu bò",
+  "description": "Quái to khoẻ, thích phá công trình.",
+  "artSubject": "a big muscular orc brute with a spiked club",
+  "props": {
+    "role": "melee",
+    "target": "buildings",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 220,
+        "damage": 26,
+        "armor": 3,
+        "attackRange": 1,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.1,
+        "goldDrop": 15
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "bare chest, wooden club"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 440,
+        "damage": 34,
+        "armor": 6,
+        "attackRange": 1,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.1,
+        "goldDrop": 30
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "bone armor, spiked club"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 660,
+        "damage": 42,
+        "armor": 9,
+        "attackRange": 1,
+        "attackSpeed": 0.8,
+        "moveSpeed": 1.1,
+        "goldDrop": 45
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "heavy iron armor, huge flaming club"
+    }
+  ]
+}

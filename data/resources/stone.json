@@ -1,0 +1,37 @@
+{
+  "key": "stone",
+  "type": "resource",
+  "name": "Đá",
+  "description": "Dùng cho tường thành và công trình cấp cao.",
+  "artSubject": "grey cut stone blocks",
+  "props": {
+    "rarity": "common",
+    "color": "#9aa4ad"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "startAmount": 500,
+        "baseCapacity": 3000
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "a small amount"
+    },
+    {
+      "level": 2,
+      "stats": {},
+      "cost": {},
+      "image": null,
+      "artNote": "a medium pile"
+    },
+    {
+      "level": 3,
+      "stats": {},
+      "cost": {},
+      "image": null,
+      "artNote": "a large overflowing pile"
+    }
+  ]
+}

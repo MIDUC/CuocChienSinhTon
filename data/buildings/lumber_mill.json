@@ -1,0 +1,57 @@
+{
+  "key": "lumber_mill",
+  "type": "building",
+  "name": "Xưởng gỗ",
+  "description": "Khai thác gỗ.",
+  "artSubject": "a lumber mill with stacked logs, a saw table and a few pine trees",
+  "props": {
+    "category": "economy",
+    "size": 2,
+    "produces": "wood",
+    "maxCount": 4
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 500,
+        "production": 220,
+        "capacity": 1000,
+        "buildTimeSec": 20
+      },
+      "cost": {
+        "gold": 120
+      },
+      "image": null,
+      "artNote": "wooden structure, thatched straw roof, simple and small"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1000,
+        "production": 440,
+        "capacity": 2000,
+        "buildTimeSec": 40
+      },
+      "cost": {
+        "gold": 480
+      },
+      "image": null,
+      "artNote": "stone foundation with timber upper floor, blue tiled roof, a few banners"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 1500,
+        "production": 660,
+        "capacity": 3000,
+        "buildTimeSec": 60
+      },
+      "cost": {
+        "gold": 1080
+      },
+      "image": null,
+      "artNote": "large stone fortress style, blue tiled roofs, golden trims, many banners and torches"
+    }
+  ]
+}

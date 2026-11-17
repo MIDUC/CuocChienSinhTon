@@ -1,0 +1,71 @@
+{
+  "key": "lan_anh",
+  "type": "general",
+  "name": "Lan Anh",
+  "description": "Nữ tướng cung, bắn xuyên nhiều mục tiêu.",
+  "artSubject": "a heroic elf-like archer general with an ornate bow and green hooded cloak",
+  "props": {
+    "role": "ranged",
+    "skill": "Mưa Tên — bắn mưa tên lên một vùng",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 600,
+        "damage": 72,
+        "armor": 4,
+        "attackRange": 5,
+        "attackSpeed": 1.2,
+        "moveSpeed": 1.7,
+        "auraRadius": 3,
+        "auraBonusPct": 8,
+        "skillCooldownSec": 16
+      },
+      "cost": {
+        "gold": 2200
+      },
+      "image": null,
+      "artNote": "leather armor and green cloak"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 1200,
+        "damage": 94,
+        "armor": 8,
+        "attackRange": 5,
+        "attackSpeed": 1.2,
+        "moveSpeed": 1.7,
+        "auraRadius": 3,
+        "auraBonusPct": 16,
+        "skillCooldownSec": 14
+      },
+      "cost": {
+        "gold": 8800
+      },
+      "image": null,
+      "artNote": "silver-trimmed leather armor, glowing arrows"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 1800,
+        "damage": 116,
+        "armor": 12,
+        "attackRange": 5,
+        "attackSpeed": 1.2,
+        "moveSpeed": 1.7,
+        "auraRadius": 3,
+        "auraBonusPct": 24,
+        "skillCooldownSec": 12
+      },
+      "cost": {
+        "gold": 19800
+      },
+      "image": null,
+      "artNote": "radiant white and gold armor, magical glowing bow"
+    }
+  ]
+}

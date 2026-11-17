@@ -1,0 +1,49 @@
+{
+  "key": "wall",
+  "type": "building",
+  "name": "Tường thành",
+  "description": "Chặn đường quái, buộc quái phải phá tường hoặc đi vòng.",
+  "artSubject": "a straight segment of castle wall with crenellations",
+  "props": {
+    "category": "wall",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 500,
+        "buildTimeSec": 5
+      },
+      "cost": {
+        "stone": 30
+      },
+      "image": null,
+      "artNote": "wooden palisade of sharpened logs"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 2000,
+        "buildTimeSec": 10
+      },
+      "cost": {
+        "stone": 120
+      },
+      "image": null,
+      "artNote": "rough grey stone wall"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 4500,
+        "buildTimeSec": 15
+      },
+      "cost": {
+        "stone": 270
+      },
+      "image": null,
+      "artNote": "thick polished stone wall with iron reinforcements and small blue pennants"
+    }
+  ]
+}

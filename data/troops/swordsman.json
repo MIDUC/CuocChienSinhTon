@@ -1,0 +1,61 @@
+{
+  "key": "swordsman",
+  "type": "troop",
+  "name": "Kiếm sĩ",
+  "description": "Lính cận chiến cơ bản, xuất từ Nhà lính.",
+  "artSubject": "a sturdy medieval swordsman with sword and shield",
+  "props": {
+    "role": "melee",
+    "size": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 120,
+        "damage": 18,
+        "armor": 2,
+        "attackRange": 1,
+        "attackSpeed": 1,
+        "moveSpeed": 1.5
+      },
+      "cost": {
+        "gold": 300
+      },
+      "image": null,
+      "artNote": "leather and cloth armor, wooden shield"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 240,
+        "damage": 24,
+        "armor": 4,
+        "attackRange": 1,
+        "attackSpeed": 1,
+        "moveSpeed": 1.5
+      },
+      "cost": {
+        "gold": 1200
+      },
+      "image": null,
+      "artNote": "chainmail with blue tabard, iron helmet"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 360,
+        "damage": 30,
+        "armor": 6,
+        "attackRange": 1,
+        "attackSpeed": 1,
+        "moveSpeed": 1.5
+      },
+      "cost": {
+        "gold": 2700
+      },
+      "image": null,
+      "artNote": "shiny plate armor with gold trims and blue cape"
+    }
+  ]
+}

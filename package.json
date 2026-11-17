@@ -1,0 +1,16 @@
+{
+  "name": "cuoc-chien-sinh-ton",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Game chiến thuật thủ thành trên lưới ô vuông (isometric 2D) — monorepo",
+  "workspaces": ["server", "admin"],
+  "scripts": {
+    "db:up": "docker compose up -d db",
+    "db:migrate": "npm run db:migrate -w server",
+    "db:seed": "npm run db:seed -w server",
+    "db:export": "npm run db:export -w server",
+    "dev:server": "npm run dev -w server",
+    "dev:admin": "npm run dev -w admin",
+    "build": "npm run build -w server && npm run build -w admin"
+  }
+}

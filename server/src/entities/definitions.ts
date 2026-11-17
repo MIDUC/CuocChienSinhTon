@@ -3,10 +3,10 @@
  * Đây là nguồn duy nhất: trang admin đọc thông tin này qua GET /api/meta.
  */
 
-export const ENTITY_TYPES = ['building', 'troop', 'general', 'monster', 'resource', 'chest', 'terrain', 'decoration', 'artifact', 'equipment'] as const;
+export const ENTITY_TYPES = ['building', 'troop', 'monster', 'resource', 'chest', 'terrain', 'decoration', 'artifact', 'equipment'] as const;
 export type EntityTypeKey = (typeof ENTITY_TYPES)[number];
 
-/** Một phần thưởng trong rương. item dạng "resource:gold", "troop:swordsman", "general:tran_hung", "chest:wooden_chest" */
+/** Một phần thưởng trong rương. item dạng "resource:gold", "troop:swordsman", "troop:tran_hung" (tướng cũng là lính), "chest:wooden_chest" */
 export interface Reward {
   item: string;
   min: number;
@@ -162,11 +162,12 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
   },
   troop: {
     type: 'troop',
-    label: 'Lính',
+    label: 'Lính & tướng',
     folder: 'troops',
     icon: '🗡️',
     hasCost: true,
     hasRewards: false,
+    note: 'Tướng là một loại lính đặc biệt (Loại đơn vị = general): mạnh hơn, có chiêu thức và hào quang. Nhà sinh ra tướng chỉ sinh đúng 1 đơn vị. Vị trí trang bị = các ô trang bị mà loại lính này mặc được (lính thường: cả đội trong nhà dùng chung bộ trang bị).',
     stats: [
       { key: 'hp', label: 'Máu' },
       { key: 'damage', label: 'Sát thương' },
@@ -174,35 +175,16 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'attackRange', label: 'Tầm đánh (ô)' },
       { key: 'attackSpeed', label: 'Tốc độ đánh (lần/giây)' },
       { key: 'moveSpeed', label: 'Tốc độ chạy (ô/giây)' },
-    ],
-    props: [
-      { key: 'role', label: 'Vai trò', hint: 'melee | ranged | tank | support' },
-      { key: 'size', label: 'Kích thước (ô)' },
-    ],
-  },
-  general: {
-    type: 'general',
-    label: 'Tướng',
-    folder: 'generals',
-    icon: '👑',
-    hasCost: true,
-    hasRewards: false,
-    stats: [
-      { key: 'hp', label: 'Máu' },
-      { key: 'damage', label: 'Sát thương' },
-      { key: 'armor', label: 'Giáp' },
-      { key: 'attackRange', label: 'Tầm đánh (ô)' },
-      { key: 'attackSpeed', label: 'Tốc độ đánh (lần/giây)' },
-      { key: 'moveSpeed', label: 'Tốc độ chạy (ô/giây)' },
-      { key: 'auraRadius', label: 'Bán kính hào quang (ô)' },
+      { key: 'auraRadius', label: 'Bán kính hào quang (ô)', hint: 'thường dùng cho tướng' },
       { key: 'auraBonusPct', label: 'Tăng sức mạnh quân xung quanh (%)' },
       { key: 'skillCooldownSec', label: 'Hồi chiêu (giây)' },
     ],
     props: [
-      { key: 'role', label: 'Vai trò' },
+      { key: 'unitClass', label: 'Loại đơn vị', hint: 'soldier = lính thường | general = tướng (nhà chỉ sinh 1)' },
+      { key: 'role', label: 'Vai trò', hint: 'melee | ranged | tank | support' },
+      { key: 'size', label: 'Kích thước (ô)' },
       { key: 'skill', label: 'Tên chiêu thức' },
       { key: 'equipSlots', label: 'Vị trí trang bị', hint: 'weapon,armor,helmet,boots,ring' },
-      { key: 'size', label: 'Kích thước (ô)' },
     ],
   },
   monster: {
@@ -337,7 +319,7 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
     hasCost: true,
     hasRewards: false,
     hasEffects: true,
-    note: 'Trang bị mặc cho tướng (và lính nếu cho phép), mỗi món chiếm 1 vị trí: vũ khí, giáp, mũ, giày, nhẫn. Chỉ số = phần cộng thêm (đuôi Pct = %). Cấp = cấp cường hoá của món đồ, chi phí theo cấp = chi phí cường hoá.',
+    note: 'Trang bị mặc cho tướng và lính (tướng mặc riêng; lính thường thì cả đội trong một nhà dùng chung), mỗi món chiếm 1 vị trí: vũ khí, giáp, mũ, giày, nhẫn. Chỉ số = phần cộng thêm (đuôi Pct = %). Cấp = cấp cường hoá của món đồ, chi phí theo cấp = chi phí cường hoá.',
     stats: [
       { key: 'hp', label: 'Máu +' },
       { key: 'hpPct', label: 'Máu +%' },
@@ -352,7 +334,7 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
     ],
     props: [
       { key: 'slot', label: 'Vị trí', hint: 'weapon | armor | helmet | boots | ring' },
-      { key: 'equipFor', label: 'Dành cho', hint: 'general | troop | both' },
+      { key: 'equipFor', label: 'Dành cho', hint: 'both | general | soldier' },
       { key: 'role', label: 'Chỉ cho vai trò', hint: 'all | melee | ranged | tank' },
       { key: 'rarity', label: 'Độ hiếm', hint: 'common | rare | epic | legendary' },
       { key: 'setName', label: 'Thuộc bộ', hint: 'tên bộ trang bị (nếu có)' },

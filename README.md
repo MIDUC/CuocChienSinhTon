@@ -2,7 +2,7 @@
 
 Game chiến thuật thủ thành trên bản đồ lưới ô vuông (hiển thị 2D isometric, góc nhìn cố định), chơi trên web và app.
 
-Phần đã có: **server + database + trang admin** để quản lý toàn bộ dữ liệu và hình ảnh game (công trình, lính, tướng, quái, tài nguyên, rương, địa hình, cây & vật trang trí, cổ vật, trang bị), mỗi loại có nhiều cấp, mỗi cấp có chỉ số và ảnh riêng.
+Phần đã có: **server + database + trang admin** để quản lý toàn bộ dữ liệu và hình ảnh game (công trình, lính & tướng, quái, tài nguyên, rương, địa hình, cây & vật trang trí, cổ vật, trang bị), mỗi loại có nhiều cấp, mỗi cấp có chỉ số và ảnh riêng.
 
 ## Cấu trúc
 
@@ -10,7 +10,7 @@ Phần đã có: **server + database + trang admin** để quản lý toàn bộ
 server/   NestJS + Prisma + PostgreSQL — API dữ liệu game, upload ảnh, sinh prompt vẽ ảnh, ảnh SVG tạm
 admin/    Trang admin (React + Vite), chạy ở /admin
 data/     Dữ liệu game dạng file: mỗi thực thể 1 file JSON
-  buildings/  troops/  generals/  monsters/  resources/  chests/  terrains/  decorations/  artifacts/  equipments/
+  buildings/  troops/  monsters/  resources/  chests/  terrains/  decorations/  artifacts/  equipments/
   art-style.json   phong cách chung để sinh prompt vẽ ảnh
 assets/   Ảnh đã upload, theo <loại>/<key>/lv<cấp>-<thời gian>.png
 ```
@@ -44,6 +44,7 @@ Bản build: `npm run build` rồi `npm start -w server` — server phục vụ 
 - Thuộc tính cố định (kích thước ô, lính xuất ra, tài nguyên sản xuất…).
 - Bảng **chỉ số theo cấp** (dòng = chỉ số, cột = cấp), thêm/xoá cấp, tự điền các cấp theo % tăng.
 - Chi phí xây / nâng cấp theo tài nguyên; phần thưởng của rương theo cấp.
+- **Tướng là một loại lính đặc biệt** (`troop` với `props.unitClass = "general"`). Nhà sinh tướng chỉ sinh đúng 1 đơn vị.
 - **Lính đóng quân** (nhà lính, trường bắn, nhà tướng…): chọn loại lính, số lính tối đa theo cấp nhà (chọn nhanh 1/3/6/9/16), cấp của lính, đội hình đứng chờ (vây quanh / xếp khối), cách ra đánh khi quái vào vùng bao phủ, xem trước đội hình trên lưới isometric. Thuật toán xếp chỗ đứng ở `admin/src/formation.ts` để game dùng lại.
   - Lính chết là mất, không tự hồi sinh. Tạo lại lính tại nhà: chi phí 1 lính (`levels[].trainCost`), thời gian tạo 1 lính (`stats.trainTimeSec`), số lính tạo cùng lúc (`stats.trainQueue`).
   - Chỉ số lính ghi ngay trên nhà, theo từng cấp nhà (`levels[].troopStats`); ô trống thì dùng chỉ số trong mục Lính.
@@ -51,7 +52,7 @@ Bản build: `npm run build` rồi `npm start -w server` — server phục vụ 
   - Cổ vật: số ô trang bị 1–10 (`artifactSlots`), cấp nhà mở từng ô (`artifactSlotUnlocks`, ví dụ `2,4,5,7,8`; cấp 1 chưa mở ô nào nếu không có số 1). Điểm cộng khi lên cấp (`levels[].stats.statPoints`) và giá trị mỗi điểm cho từng chỉ số được phép cộng (`statPointValues`, ví dụ `hp:20,damage:3`).
 - **Vật phẩm** (Cổ vật, Trang bị) có trang tổng quan dạng bảng (lọc theo độ hiếm, vị trí):
   - Cổ vật: trang bị vào ô cổ vật của nhà lính, cộng chỉ số cho lính của nhà đó (số thường = cộng thẳng, đuôi `Pct` = cộng %).
-  - Trang bị: mặc cho tướng (và lính nếu cho phép), vị trí vũ khí / giáp / mũ / giày / nhẫn, có thể thuộc một bộ.
+  - Trang bị: mặc cho tướng (riêng từng tướng) và lính (cả đội trong một nhà dùng chung), vị trí vũ khí / giáp / mũ / giày / nhẫn, có thể thuộc một bộ.
   - Mỗi cấp có **công dụng đặc biệt** riêng (`levels[].effects`): hút máu, chí mạng, sát thương lan, làm chậm, choáng, thiêu đốt, độc, đẩy lùi, phá giáp, phản đòn, khiên, hồi máu, hào quang, né đòn, hồi sinh 1 lần, thêm vàng. Danh sách công dụng ở `server/src/entities/definitions.ts` (`EFFECT_TYPES`).
 - **Ảnh theo cấp**: upload / thay / xoá (kéo thả được). Chưa có ảnh thì dùng ảnh SVG isometric tạm.
 - **Prompt vẽ ảnh** cho từng cấp (bản chung cho Leonardo / Stable Diffusion / ChatGPT, bản Midjourney, negative prompt) kèm kích thước ảnh đề xuất, nút Copy. Phong cách chung sửa ở trang *Phong cách & prompt chung*.

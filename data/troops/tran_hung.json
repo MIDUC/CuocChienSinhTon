@@ -1,10 +1,11 @@
 {
   "key": "tran_hung",
-  "type": "general",
+  "type": "troop",
   "name": "Trấn Hùng",
   "description": "Tướng cận chiến, hào quang tăng sát thương cho lính xung quanh.",
   "artSubject": "a heroic warrior general with a big two-handed sword and a flowing red cape",
   "props": {
+    "unitClass": "general",
     "role": "melee",
     "skill": "Hống Lôi Trảm — chém lan đẩy lùi quái",
     "size": 1,

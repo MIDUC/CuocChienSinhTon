@@ -90,7 +90,7 @@ function character(e: EntityData, level: number, max: number) {
   const t = max > 1 ? (level - 1) / (max - 1) : 0;
   const cx = 128;
   const isMonster = e.type === 'monster';
-  const isGeneral = e.type === 'general';
+  const isGeneral = e.props.unitClass === 'general';
   const skin = isMonster ? hsl(hue, 45, 45) : hsl(28, 55, 72);
   const cloth = isMonster ? hsl(hue + 20, 35, 35) : hsl(hue, 60, 48);
   const scale = 0.85 + t * 0.25 + (isGeneral ? 0.1 : 0);
@@ -261,7 +261,6 @@ export function placeholderSvg(e: EntityData, level: number): string {
       body = building(e, lv, max);
       break;
     case 'troop':
-    case 'general':
     case 'monster':
       body = character(e, lv, max);
       break;

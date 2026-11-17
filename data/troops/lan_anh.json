@@ -1,10 +1,11 @@
 {
   "key": "lan_anh",
-  "type": "general",
+  "type": "troop",
   "name": "Lan Anh",
   "description": "Nữ tướng cung, bắn xuyên nhiều mục tiêu.",
   "artSubject": "a heroic elf-like archer general with an ornate bow and green hooded cloak",
   "props": {
+    "unitClass": "general",
     "role": "ranged",
     "skill": "Mưa Tên — bắn mưa tên lên một vùng",
     "size": 1,

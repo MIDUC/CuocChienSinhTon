@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Giá trị "general" chỉ giữ lại cho tương thích: tướng nay là lính (type troop, props.unitClass = "general").
 enum EntityType {
   building
   troop

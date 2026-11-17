@@ -195,7 +195,7 @@ function EntityList({ typeDef, meta, items }: { typeDef: Meta['types'][number]; 
                   </td>
                   <td>
                     {typeDef.type === 'equipment'
-                      ? `${SLOT_LABEL[String(e.props.slot)] ?? e.props.slot ?? '—'} · ${({ general: 'Tướng', troop: 'Lính', both: 'Tướng & lính' } as Record<string, string>)[String(e.props.equipFor)] ?? e.props.equipFor ?? ''}`
+                      ? `${SLOT_LABEL[String(e.props.slot)] ?? e.props.slot ?? '—'} · ${({ general: 'Tướng', soldier: 'Lính', both: 'Tướng & lính' } as Record<string, string>)[String(e.props.equipFor)] ?? e.props.equipFor ?? ''}`
                       : String(e.props.appliesTo ?? 'all')}
                     {e.props.setName ? <div><small className="muted">Bộ: {String(e.props.setName)}</small></div> : null}
                   </td>
@@ -229,7 +229,9 @@ function EntityList({ typeDef, meta, items }: { typeDef: Meta['types'][number]; 
             <div className="card-body">
               <b>{e.name}</b>
               <code>{e.key}</code>
-              <span className="muted">{e.levelCount} cấp</span>
+              <span className="muted">
+                {e.levelCount} cấp{e.props.unitClass === 'general' && <span className="tag ok" style={{ marginLeft: 6 }}>Tướng</span>}
+              </span>
             </div>
           </a>
         ))}

@@ -54,7 +54,6 @@ export function recommendedSize(e: EntityData, style: ArtStyle): SizeSpec {
       };
     }
     case 'troop':
-    case 'general':
     case 'monster': {
       const n = numProp(e, 'size', 1);
       const w = tw * 2 * n;
@@ -107,10 +106,11 @@ export function recommendedSize(e: EntityData, style: ArtStyle): SizeSpec {
   }
 }
 
+const GENERAL_FRAMING = 'a single heroic general character, full body, larger and more ornate than a normal soldier, confident pose';
+
 const TYPE_FRAMING: Record<EntityTypeKey, string> = {
   building: 'a building that stands on a {size} square grass tile shown as an isometric diamond base',
   troop: 'a single soldier unit character, full body, standing in an idle combat pose',
-  general: 'a single heroic general character, full body, larger and more ornate than a normal soldier, confident pose',
   monster: 'a single monster enemy character, full body, menacing but cute stylized proportions',
   resource: 'a game resource icon',
   chest: 'a closed treasure chest game item',
@@ -142,7 +142,7 @@ export function buildPrompts(e: EntityData, style: ArtStyle): LevelPrompt[] {
   const size = recommendedSize(e, style);
   const max = e.levels.length;
   const n = numProp(e, 'size', 1);
-  const framing = TYPE_FRAMING[e.type].replace('{size}', `${n}x${n}`).replace('{slot}', String(e.props.slot ?? 'item'));
+  const framing = (e.type === 'troop' && e.props.unitClass === 'general' ? GENERAL_FRAMING : TYPE_FRAMING[e.type]).replace('{size}', `${n}x${n}`).replace('{slot}', String(e.props.slot ?? 'item'));
   const subject = e.artSubject.trim() || e.name;
 
   return e.levels.map((lv) => {

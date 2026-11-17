@@ -1,4 +1,4 @@
-export type EntityType = 'building' | 'troop' | 'general' | 'monster' | 'resource' | 'chest' | 'terrain' | 'decoration' | 'artifact' | 'equipment';
+export type EntityType = 'building' | 'troop' | 'monster' | 'resource' | 'chest' | 'terrain' | 'decoration' | 'artifact' | 'equipment';
 
 export interface Reward {
   item: string;

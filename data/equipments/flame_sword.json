@@ -6,7 +6,7 @@
   "artSubject": "a broad sword wreathed in flames",
   "props": {
     "slot": "weapon",
-    "equipFor": "general",
+    "equipFor": "both",
     "role": "melee",
     "rarity": "epic",
     "setName": "Hoả Long"

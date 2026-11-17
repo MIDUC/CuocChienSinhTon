@@ -6,7 +6,7 @@
   "artSubject": "heavy plate armor made of red dragon scales",
   "props": {
     "slot": "armor",
-    "equipFor": "general",
+    "equipFor": "both",
     "role": "all",
     "rarity": "legendary",
     "setName": "Hoả Long"

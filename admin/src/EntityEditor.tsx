@@ -31,7 +31,7 @@ function blank(typeDef: TypeDef): EntityData {
     name: '',
     description: '',
     artSubject: '',
-    props: typeDef.type === 'building' || typeDef.type === 'troop' || typeDef.type === 'general' || typeDef.type === 'monster' || typeDef.type === 'decoration' ? { size: 1 } : {},
+    props: typeDef.type === 'building' || typeDef.type === 'troop' || typeDef.type === 'monster' || typeDef.type === 'decoration' ? { size: 1 } : {},
     levels: [{ level: 1, stats: {}, cost: {}, image: null, artNote: '', ...(typeDef.hasRewards ? { rewards: [] } : {}) }],
   };
 }
@@ -340,7 +340,7 @@ function PropsEditor({
     <div className="props">
       <h3>Thuộc tính cố định (không đổi theo cấp)</h3>
       <datalist id="dl-units">
-        {all.filter((e) => e.type === 'troop' || e.type === 'general').map((e) => (
+        {all.filter((e) => e.type === 'troop').map((e) => (
           <option key={e.id} value={e.key}>{e.name}</option>
         ))}
       </datalist>
@@ -535,7 +535,7 @@ function StatGrid({
 /* ---------------- Phần thưởng rương ---------------- */
 
 function RewardsEditor({ levels, all, onChange }: { levels: LevelData[]; all: EntitySummary[]; onChange: (l: LevelData[]) => void }) {
-  const items = all.filter((e) => ['resource', 'troop', 'general', 'chest'].includes(e.type));
+  const items = all.filter((e) => ['resource', 'troop', 'chest'].includes(e.type));
   const nameOf = (item: string) => {
     const [t, k] = item.split(':');
     return all.find((e) => e.type === t && e.key === k)?.name;

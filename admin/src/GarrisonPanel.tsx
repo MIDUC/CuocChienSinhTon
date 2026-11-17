@@ -16,6 +16,7 @@ function parsePointValues(s: string): Record<string, number> {
 }
 const serializePointValues = (m: Record<string, number>) => Object.entries(m).map(([k, v]) => `${k}:${v}`).join(',');
 
+const SLOT_LABEL: Record<string, string> = { weapon: 'Vũ khí', armor: 'Giáp', helmet: 'Mũ', boots: 'Giày', ring: 'Nhẫn' };
 const QUICK_COUNTS = [1, 3, 6, 9, 16];
 const TW = 64; // bề ngang 1 ô trong khung xem trước
 const TH = 32;
@@ -31,7 +32,7 @@ interface Props {
 }
 
 export default function GarrisonPanel({ draft, all, buildingImage, setProps, setLevels, troopStatDefs }: Props) {
-  const units = all.filter((e) => e.type === 'troop' || e.type === 'general');
+  const units = all.filter((e) => e.type === 'troop');
   const spawnKey = String(draft.props.spawns ?? '');
   const unitSummary = units.find((u) => u.key === spawnKey);
   const [unit, setUnit] = useState<EntityView | null>(null);
@@ -145,6 +146,16 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
     return l?.image ?? `/api/art/placeholder/${unit.type}/${unit.key}/${l?.level ?? 1}.svg?v=${new Date(unit.updatedAt).getTime()}`;
   };
   const unitMaxLevel = unit?.levels.length ?? unitSummary?.levelCount ?? 1;
+  // Tướng là lính đặc biệt: nhà sinh tướng chỉ sinh đúng 1 đơn vị
+  const isGeneralUnit = unitSummary?.props.unitClass === 'general';
+  useEffect(() => {
+    if (isGeneralUnit && draft.levels.some((l) => l.stats.troopCount !== 1))
+      setLevels(draft.levels.map((l) => ({ ...l, stats: { ...l.stats, troopCount: 1 } })));
+  }, [isGeneralUnit, draft.levels]);
+  const equipSlots = String(unitSummary?.props.equipSlots ?? '')
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean);
 
   const lvIdx = Math.min(previewLevel, draft.levels.length) - 1;
   const lv = draft.levels[lvIdx];
@@ -167,7 +178,7 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
             <option value="">— chọn —</option>
             {units.map((u) => (
               <option key={u.id} value={u.key}>
-                {u.type === 'general' ? 'Tướng' : 'Lính'}: {u.name} ({u.key})
+                {u.props.unitClass === 'general' ? 'Tướng' : 'Lính'}: {u.name} ({u.key})
               </option>
             ))}
           </select>
@@ -217,6 +228,27 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
         </div>
       </div>
 
+      {unitSummary && (
+        <div className="equip-info">
+          <b>Trang bị:</b>
+          {equipSlots.length ? (
+            equipSlots.map((sl) => (
+              <span key={sl} className="pill">
+                {SLOT_LABEL[sl] ?? sl}
+              </span>
+            ))
+          ) : (
+            <span className="muted">loại lính này chưa có vị trí trang bị</span>
+          )}
+          <small className="muted">
+            {isGeneralUnit
+              ? 'Tướng mặc trang bị riêng.'
+              : 'Người chơi trang bị tại nhà này, cả đội lính của nhà dùng chung bộ trang bị.'}{' '}
+            Sửa vị trí ở trang <a href={`#/troop/${unitSummary.id}`}>{unitSummary.name}</a>, sửa món đồ ở mục <a href="#/equipment">Trang bị</a>.
+          </small>
+        </div>
+      )}
+
       <h3>Số lính theo cấp nhà</h3>
       <div className="table-wrap">
         <table className="garrison-table">
@@ -238,6 +270,9 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
                 <tr key={i} className={i === lvIdx ? 'sel' : ''} onClick={() => setPreviewLevel(i + 1)}>
                   <th>Cấp {l.level}</th>
                   <td>
+                    {isGeneralUnit ? (
+                      <span><b>1</b> <span className="muted">(tướng — nhà chỉ sinh 1 đơn vị)</span></span>
+                    ) : (
                     <div className="count-cell">
                       <input type="number" min="0" value={count ?? ''} onChange={(e) => setStat(i, 'troopCount', e.target.value === '' ? null : Number(e.target.value))} />
                       {QUICK_COUNTS.map((q) => (
@@ -246,6 +281,7 @@ export default function GarrisonPanel({ draft, all, buildingImage, setProps, set
                         </button>
                       ))}
                     </div>
+                    )}
                   </td>
                   <td>
                     <input type="number" min="1" max={unitMaxLevel} value={tl} onChange={(e) => setStat(i, 'troopLevel', Number(e.target.value))} style={{ width: 70 }} />

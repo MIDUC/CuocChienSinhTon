@@ -189,6 +189,13 @@ export class UI {
         sc.claimQuest(d.q!);
         this.quests();
         return;
+      case 'merchant':
+        this.merchant();
+        return;
+      case 'trade':
+        sc.trade(Number(d.i));
+        this.merchant();
+        return;
       case 'mute':
         toggleMute();
         break;
@@ -232,7 +239,7 @@ export class UI {
     const enemies = sc.units.filter((u) => u.team === 'enemy' && u.alive).length + sc.spawnQueue.length;
     const wave =
       sc.phase === 'battle'
-        ? `<div class="wave battle">⚔️ Đợt ${s.wave + 1} <small>còn ${enemies} quái</small></div>`
+        ? `<div class="wave battle">${sc.curMod ? `<span class="preview">${sc.curMod.icon} ${esc(sc.curMod.name)}</span>` : ''}⚔️ Đợt ${s.wave + 1} <small>còn ${enemies} quái</small></div>`
         : `<div class="wave">${this.wavePreview()}🛡️ Đợt ${s.wave + 1} sau <b>${secs(Math.max(0, s.prepLeft))}</b> <button class="btn red" data-act="wave">Gọi quái ngay</button></div>`;
     const qn = claimable(sc).length;
     const ruined = sc.ruinedCount();
@@ -241,7 +248,7 @@ export class UI {
     this.set(
       this.top,
       'top',
-      `<div class="resbar">${res}${ready ? '<button class="btn sm green" data-act="collectAll">Thu hoạch tất cả</button>' : ''}</div>${wave}<div class="tools">${speeds}${ruined ? `<button class="btn sm red" data-act="repairAll">🔧 Sửa ${ruined}</button>` : ''}<button class="btn sm ${qn ? 'gold' : ''}" data-act="quests">📜 Nhiệm vụ${qn ? ` <span class="badge">${qn}</span>` : ''}</button><button class="btn sm" data-act="treasury" data-tab="artifact">💠 Kho báu</button><button class="btn sm" data-act="mute">${isMuted() ? '🔇' : '🔊'}</button><button class="btn sm" data-act="help">❔</button><button class="btn sm" data-act="menu">☰</button></div>`,
+      `<div class="resbar">${res}${ready ? '<button class="btn sm green" data-act="collectAll">Thu hoạch tất cả</button>' : ''}</div>${wave}<div class="tools">${speeds}${s.merchant && sc.phase === 'build' ? '<button class="btn sm gold" data-act="merchant">🐪 Thương nhân</button>' : ''}${ruined ? `<button class="btn sm red" data-act="repairAll">🔧 Sửa ${ruined}</button>` : ''}<button class="btn sm ${qn ? 'gold' : ''}" data-act="quests">📜 Nhiệm vụ${qn ? ` <span class="badge">${qn}</span>` : ''}</button><button class="btn sm" data-act="treasury" data-tab="artifact">💠 Kho báu</button><button class="btn sm" data-act="mute">${isMuted() ? '🔇' : '🔊'}</button><button class="btn sm" data-act="help">❔</button><button class="btn sm" data-act="menu">☰</button></div>`,
     );
   }
 
@@ -272,7 +279,8 @@ export class UI {
     const w = sc.waveMonsters(sc.s.wave + 1);
     const items = w.list.map((g) => `${esc(g.e.name)}×${g.count}`).join(', ');
     const boss = w.list.some((g) => g.e.props.role === 'boss');
-    return `<span class="preview" title="Cấp quái ${w.level} · ${sc.activeSpawns()} cổng">${boss ? '👑 ' : ''}${items} · Lv${w.level}</span>`;
+    const mod = w.mod ? `<b title="${esc(w.mod.desc)}">${w.mod.icon} ${esc(w.mod.name)}</b> · ` : '';
+    return `<span class="preview" title="Cấp quái ${w.level} · ${sc.activeSpawns()} cổng${w.mod ? ' · ' + esc(w.mod.desc) : ''}">${mod}${boss ? '👑 ' : ''}${items} · Lv${w.level}</span>`;
   }
 
   renderSpells() {
@@ -311,6 +319,20 @@ export class UI {
     const order = (h: string) => (h.includes('ready') ? 0 : h.includes('done') ? 2 : 1);
     rows.sort((a, b) => order(a) - order(b));
     this.openModal(`<h2>📜 Nhiệm vụ & thành tựu</h2><div class="quests">${rows.join('')}</div><div class="row"><button class="btn" data-act="modalClose">Đóng</button></div>`);
+  }
+
+  merchant() {
+    const sc = this.sc;
+    const m = sc.s.merchant;
+    if (!m) return this.closeModal();
+    const label = (r: Record<string, number>) =>
+      Object.entries(r)
+        .map(([k, v]) => (k.startsWith('troop:') ? `${v} ${esc(get('troop', k.slice(6))?.name ?? k)} (dự bị)` : `${RES_ICON[k] ?? ''} ${v} ${esc(get('resource', k)?.name ?? k)}`))
+        .join(', ');
+    const rows = m.offers
+      .map((o, i) => `<div class="quest ${o.used ? 'done' : ''}"><div>Đưa <b>${label(o.give)}</b> → nhận <b>${label(o.get)}</b></div><div>${o.used ? '✅' : `<button class="btn sm gold ${canAfford(sc.s.resources, o.give) ? '' : 'disabled'}" data-act="trade" data-i="${i}">Đổi</button>`}</div></div>`)
+      .join('');
+    this.openModal(`<h2>🐪 Thương nhân lữ hành</h2><p class="sub">Chỉ ở lại tới khi đợt quái tiếp theo bắt đầu.</p><div class="quests">${rows}</div><div class="row"><button class="btn" data-act="modalClose">Đóng</button></div>`);
   }
 
   difficultyPicker() {

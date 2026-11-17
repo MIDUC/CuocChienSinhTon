@@ -92,6 +92,8 @@ export interface SaveState {
   /** 0.75 dễ · 1 thường · 1.35 khó */
   difficulty: number;
   savedAt: number;
+  /** thương nhân ghé thăm giữa các đợt */
+  merchant?: { wave: number; offers: { give: Record<string, number>; get: Record<string, number>; used?: boolean }[] } | null;
 }
 
 const SAVE_KEY = 'cuocchiensinhton-save-v1';

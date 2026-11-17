@@ -29,7 +29,7 @@ function blank(typeDef: TypeDef): EntityData {
     name: '',
     description: '',
     artSubject: '',
-    props: typeDef.type === 'building' || typeDef.type === 'troop' || typeDef.type === 'general' || typeDef.type === 'monster' ? { size: 1 } : {},
+    props: typeDef.type === 'building' || typeDef.type === 'troop' || typeDef.type === 'general' || typeDef.type === 'monster' || typeDef.type === 'decoration' ? { size: 1 } : {},
     levels: [{ level: 1, stats: {}, cost: {}, image: null, artNote: '', ...(typeDef.hasRewards ? { rewards: [] } : {}) }],
   };
 }

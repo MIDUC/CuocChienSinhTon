@@ -1,0 +1,39 @@
+{
+  "key": "haystack",
+  "type": "decoration",
+  "name": "Đống rơm",
+  "description": "Vật trang trí nông trại.",
+  "artSubject": "a golden haystack",
+  "props": {
+    "category": "prop",
+    "size": 1,
+    "blocking": true,
+    "clearable": true,
+    "drops": "food",
+    "placeOn": "grass"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 20,
+        "clearTimeSec": 5,
+        "dropAmount": 20
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "small round hay bale"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 30,
+        "clearTimeSec": 8,
+        "dropAmount": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "large haystack with a pitchfork"
+    }
+  ]
+}

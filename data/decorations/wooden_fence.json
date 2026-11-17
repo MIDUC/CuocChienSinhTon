@@ -1,0 +1,34 @@
+{
+  "key": "wooden_fence",
+  "type": "decoration",
+  "name": "Hàng rào gỗ",
+  "description": "Hàng rào trang trí, người chơi đặt được.",
+  "artSubject": "a short rustic wooden fence segment",
+  "props": {
+    "category": "fence",
+    "size": 1,
+    "blocking": true,
+    "clearable": true,
+    "placeOn": "grass"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 40
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "simple rough planks"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 80
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "neat painted fence with stone posts"
+    }
+  ]
+}

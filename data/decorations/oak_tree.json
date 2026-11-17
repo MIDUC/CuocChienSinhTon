@@ -1,0 +1,53 @@
+{
+  "key": "oak_tree",
+  "type": "decoration",
+  "name": "Cây sồi",
+  "description": "Cây lá rộng. Chặt được để lấy gỗ.",
+  "artSubject": "a round leafy oak tree",
+  "props": {
+    "category": "tree",
+    "size": 1,
+    "blocking": true,
+    "clearable": true,
+    "drops": "wood",
+    "placeOn": "grass"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 30,
+        "clearTimeSec": 10,
+        "dropAmount": 40,
+        "spawnWeight": 30
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "young small sapling"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 60,
+        "clearTimeSec": 20,
+        "dropAmount": 90,
+        "spawnWeight": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "medium oak with full round canopy"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 100,
+        "clearTimeSec": 30,
+        "dropAmount": 160,
+        "spawnWeight": 20
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "large old oak with thick trunk and wide canopy"
+    }
+  ]
+}

@@ -77,7 +77,7 @@ export default function App() {
             <span className="count">{all.filter((e) => e.type === t.type).length}</span>
           </a>
         ))}
-        <div className="nav-title">Hình ảnh</div>
+        <div className="nav-title">Phong cách ảnh</div>
         <a href="#/style" className={route.page === 'style' ? 'active' : ''}>
           <span className="nav-icon">🎨</span>Phong cách & prompt chung
         </a>
@@ -126,6 +126,7 @@ function EntityList({ typeDef, items }: { typeDef: Meta['types'][number]; items:
       </div>
       <p className="muted">
         Mỗi {typeDef.label.toLowerCase()} là một bản ghi JSON riêng trong database (file tương ứng: <code>data/{typeDef.folder}/&lt;key&gt;.json</code>).
+        {typeDef.note && <> {typeDef.note}</>}
       </p>
       <div className="cards">
         {shown.map((e) => (

@@ -1,0 +1,53 @@
+{
+  "key": "rock",
+  "type": "decoration",
+  "name": "Tảng đá",
+  "description": "Đá chắn đường. Đập được để lấy đá.",
+  "artSubject": "a cluster of grey boulders",
+  "props": {
+    "category": "rock",
+    "size": 1,
+    "blocking": true,
+    "clearable": true,
+    "drops": "stone",
+    "placeOn": "grass"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 50,
+        "clearTimeSec": 15,
+        "dropAmount": 30,
+        "spawnWeight": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "two small rocks"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 120,
+        "clearTimeSec": 30,
+        "dropAmount": 80,
+        "spawnWeight": 35
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "medium boulder with moss"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 250,
+        "clearTimeSec": 60,
+        "dropAmount": 180,
+        "spawnWeight": 15
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "large boulder pile with moss and small crystals"
+    }
+  ]
+}

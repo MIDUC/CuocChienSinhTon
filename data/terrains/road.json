@@ -1,0 +1,35 @@
+{
+  "key": "road",
+  "type": "terrain",
+  "name": "Đường đất",
+  "description": "Đường cho quái và xe đi, tăng tốc di chuyển, không xây được.",
+  "artSubject": "a sandy beige dirt road",
+  "props": {
+    "walkable": true,
+    "buildable": false,
+    "layer": "road",
+    "color": "#d9c08a"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "moveCost": 0.8,
+        "spawnWeight": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "straight road running diagonally across the tile with grass edges"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "moveCost": 0.8,
+        "spawnWeight": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "road with wheel ruts and small stones, grass edges"
+    }
+  ]
+}

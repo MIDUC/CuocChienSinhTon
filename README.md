@@ -2,7 +2,7 @@
 
 Game chiến thuật thủ thành trên bản đồ lưới ô vuông (hiển thị 2D isometric, góc nhìn cố định), chơi trên web và app.
 
-Phần đã có: **server + database + trang admin** để quản lý toàn bộ dữ liệu game (công trình, lính, tướng, quái, tài nguyên, rương), mỗi loại có nhiều cấp, mỗi cấp có chỉ số và ảnh riêng.
+Phần đã có: **server + database + trang admin** để quản lý toàn bộ dữ liệu và hình ảnh game (công trình, lính, tướng, quái, tài nguyên, rương, địa hình, cây & vật trang trí), mỗi loại có nhiều cấp, mỗi cấp có chỉ số và ảnh riêng.
 
 ## Cấu trúc
 
@@ -10,7 +10,7 @@ Phần đã có: **server + database + trang admin** để quản lý toàn bộ
 server/   NestJS + Prisma + PostgreSQL — API dữ liệu game, upload ảnh, sinh prompt vẽ ảnh, ảnh SVG tạm
 admin/    Trang admin (React + Vite), chạy ở /admin
 data/     Dữ liệu game dạng file: mỗi thực thể 1 file JSON
-  buildings/  troops/  generals/  monsters/  resources/  chests/
+  buildings/  troops/  generals/  monsters/  resources/  chests/  terrains/  decorations/
   art-style.json   phong cách chung để sinh prompt vẽ ảnh
 assets/   Ảnh đã upload, theo <loại>/<key>/lv<cấp>-<thời gian>.png
 ```

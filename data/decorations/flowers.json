@@ -1,0 +1,34 @@
+{
+  "key": "flowers",
+  "type": "decoration",
+  "name": "Khóm hoa",
+  "description": "Trang trí, không chặn đường.",
+  "artSubject": "a patch of colorful wildflowers",
+  "props": {
+    "category": "flower",
+    "size": 1,
+    "blocking": false,
+    "clearable": true,
+    "placeOn": "grass"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "spawnWeight": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "red and yellow flowers"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "spawnWeight": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "purple and white flowers"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-export type EntityType = 'building' | 'troop' | 'general' | 'monster' | 'resource' | 'chest';
+export type EntityType = 'building' | 'troop' | 'general' | 'monster' | 'resource' | 'chest' | 'terrain' | 'decoration';
 
 export interface Reward {
   item: string;
@@ -72,6 +72,7 @@ export interface TypeDef {
   props: FieldDef[];
   hasCost: boolean;
   hasRewards: boolean;
+  note?: string;
 }
 
 export interface Meta {

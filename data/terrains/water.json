@@ -1,0 +1,35 @@
+{
+  "key": "water",
+  "type": "terrain",
+  "name": "Nước",
+  "description": "Sông hồ, không đi và không xây được (trừ quái bay).",
+  "artSubject": "clear shallow blue water",
+  "props": {
+    "walkable": false,
+    "buildable": false,
+    "layer": "water",
+    "color": "#4aa3df"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "moveCost": 99,
+        "spawnWeight": 60
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "calm water with gentle highlights"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "moveCost": 99,
+        "spawnWeight": 40
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "water with small ripples and a lily pad"
+    }
+  ]
+}

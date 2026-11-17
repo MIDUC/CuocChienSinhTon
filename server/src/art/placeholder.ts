@@ -146,6 +146,66 @@ function chest(e: EntityData, level: number, max: number) {
   return g;
 }
 
+function terrain(e: EntityData, level: number) {
+  const color = typeof e.props.color === 'string' ? e.props.color : hsl(hash(e.key) % 360, 50, 55);
+  const cx = 128;
+  const cy = 150;
+  let g = `
+  <polygon points="${pts([[cx - 124, cy], [cx, cy + 62], [cx, cy + 82], [cx - 124, cy + 20]])}" fill="${hsl(30, 40, 36)}"/>
+  <polygon points="${pts([[cx, cy + 62], [cx + 124, cy], [cx + 124, cy + 20], [cx, cy + 82]])}" fill="${hsl(30, 40, 28)}"/>
+  <polygon points="${pts([[cx - 124, cy], [cx, cy - 62], [cx + 124, cy], [cx, cy + 62]])}" fill="${color}" stroke="rgba(0,0,0,.18)" stroke-width="2"/>`;
+  // chấm hoạ tiết khác nhau theo biến thể
+  let r = hash(e.key + level);
+  for (let i = 0; i < 10 + level * 4; i++) {
+    r = (Math.imul(r, 1103515245) + 12345) >>> 0;
+    const u = (r % 1000) / 1000 - 0.5;
+    const v = ((r >>> 10) % 1000) / 1000 - 0.5;
+    const x = cx + (u + v) * 124 * 0.85;
+    const y = cy + (v - u) * 62 * 0.85;
+    g += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="5" ry="2.5" fill="rgba(0,0,0,.12)"/>`;
+  }
+  return g;
+}
+
+function decoration(e: EntityData, level: number, max: number) {
+  const t = max > 1 ? (level - 1) / (max - 1) : 0;
+  const cat = String(e.props.category ?? 'prop');
+  const cx = 128;
+  const base = 196;
+  let g = `<ellipse cx="${cx}" cy="${base}" rx="${46 + t * 20}" ry="${18 + t * 8}" fill="rgba(0,0,0,.22)"/>`;
+  if (cat === 'tree') {
+    const s = 0.7 + t * 0.45;
+    const pine = /pine|thông/i.test(e.key + e.name);
+    g += `<rect x="${cx - 8 * s}" y="${base - 50 * s}" width="${16 * s}" height="${50 * s}" fill="#7a4e2d"/>`;
+    if (pine) {
+      for (let i = 0; i < 3; i++) {
+        const y = base - 40 * s - i * 34 * s;
+        const w = (58 - i * 14) * s;
+        g += `<polygon points="${pts([[cx - w, y], [cx, y - 56 * s], [cx + w, y]])}" fill="${hsl(140, 45, 30 + i * 6)}"/>`;
+      }
+    } else {
+      g += `<circle cx="${cx}" cy="${base - 100 * s}" r="${54 * s}" fill="${hsl(110, 50, 40)}"/>`;
+      g += `<circle cx="${cx - 26 * s}" cy="${base - 82 * s}" r="${34 * s}" fill="${hsl(110, 50, 45)}"/>`;
+      g += `<circle cx="${cx + 22 * s}" cy="${base - 118 * s}" r="${28 * s}" fill="${hsl(110, 55, 55)}"/>`;
+    }
+  } else if (cat === 'rock') {
+    const s = 0.7 + t * 0.5;
+    g += `<polygon points="${pts([[cx - 50 * s, base], [cx - 34 * s, base - 46 * s], [cx + 6 * s, base - 64 * s], [cx + 46 * s, base - 36 * s], [cx + 54 * s, base]])}" fill="${hsl(210, 8, 60)}"/>`;
+    g += `<polygon points="${pts([[cx + 6 * s, base - 64 * s], [cx + 46 * s, base - 36 * s], [cx + 54 * s, base], [cx + 10 * s, base]])}" fill="${hsl(210, 8, 48)}"/>`;
+  } else if (cat === 'bush' || cat === 'flower') {
+    const s = 0.7 + t * 0.4;
+    for (const [dx, dy, r] of [[-24, -20, 26], [22, -18, 24], [0, -38, 28]]) g += `<circle cx="${cx + dx * s}" cy="${base + dy * s}" r="${r * s}" fill="${hsl(115, 45, 42)}"/>`;
+    if (cat === 'flower') for (const [dx, dy] of [[-30, -30], [10, -50], [26, -24], [-6, -20]]) g += `<circle cx="${cx + dx * s}" cy="${base + dy * s}" r="${6 * s}" fill="${hsl(hash(e.key) % 360, 80, 65)}"/>`;
+  } else if (cat === 'fence') {
+    for (let i = -2; i <= 2; i++) g += `<rect x="${cx + i * 26 - 4}" y="${base - 46 + i * 13 - 10}" width="8" height="48" fill="#8a5a33"/>`;
+    g += `<line x1="${cx - 60}" y1="${base - 60}" x2="${cx + 60}" y2="${base}" stroke="#a06a3e" stroke-width="7"/>`;
+    g += `<line x1="${cx - 60}" y1="${base - 40}" x2="${cx + 60}" y2="${base + 20}" stroke="#a06a3e" stroke-width="7"/>`;
+  } else {
+    g += box(cx, base - 10, 34, 17, 40 + t * 20, hash(e.key) % 360, 35, 62);
+  }
+  return g;
+}
+
 export function placeholderSvg(e: EntityData, level: number): string {
   const max = Math.max(1, e.levels.length);
   const lv = Math.max(1, Math.min(level, max));
@@ -164,6 +224,12 @@ export function placeholderSvg(e: EntityData, level: number): string {
       break;
     case 'chest':
       body = chest(e, lv, max);
+      break;
+    case 'terrain':
+      body = terrain(e, lv);
+      break;
+    case 'decoration':
+      body = decoration(e, lv, max);
       break;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">

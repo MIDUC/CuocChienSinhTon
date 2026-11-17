@@ -1,0 +1,53 @@
+{
+  "key": "pine_tree",
+  "type": "decoration",
+  "name": "Cây thông",
+  "description": "Cây thông lá kim. Chặt được để lấy gỗ.",
+  "artSubject": "a tall stylized pine tree with layered cone-shaped foliage",
+  "props": {
+    "category": "tree",
+    "size": 1,
+    "blocking": true,
+    "clearable": true,
+    "drops": "wood",
+    "placeOn": "grass"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 30,
+        "clearTimeSec": 10,
+        "dropAmount": 40,
+        "spawnWeight": 30
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "small young pine"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 60,
+        "clearTimeSec": 20,
+        "dropAmount": 90,
+        "spawnWeight": 50
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "medium pine"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "hp": 100,
+        "clearTimeSec": 30,
+        "dropAmount": 160,
+        "spawnWeight": 20
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "tall mature pine"
+    }
+  ]
+}

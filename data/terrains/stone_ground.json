@@ -1,0 +1,25 @@
+{
+  "key": "stone_ground",
+  "type": "terrain",
+  "name": "Nền đá",
+  "description": "Nền đá cứng, xây được công trình phòng thủ.",
+  "artSubject": "grey cobblestone paving",
+  "props": {
+    "walkable": true,
+    "buildable": true,
+    "layer": "ground",
+    "color": "#9aa4ad"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "moveCost": 1,
+        "spawnWeight": 100
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "neat grey cobblestones"
+    }
+  ]
+}

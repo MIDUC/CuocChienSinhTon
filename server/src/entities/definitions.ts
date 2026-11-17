@@ -3,7 +3,7 @@
  * Đây là nguồn duy nhất: trang admin đọc thông tin này qua GET /api/meta.
  */
 
-export const ENTITY_TYPES = ['building', 'troop', 'general', 'monster', 'resource', 'chest'] as const;
+export const ENTITY_TYPES = ['building', 'troop', 'general', 'monster', 'resource', 'chest', 'terrain', 'decoration'] as const;
 export type EntityTypeKey = (typeof ENTITY_TYPES)[number];
 
 /** Một phần thưởng trong rương. item dạng "resource:gold", "troop:swordsman", "general:tran_hung", "chest:wooden_chest" */
@@ -61,6 +61,8 @@ export interface TypeDef {
   hasCost: boolean;
   /** Có danh sách phần thưởng không (rương) */
   hasRewards: boolean;
+  /** Ghi chú hiển thị trên trang danh sách */
+  note?: string;
 }
 
 export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
@@ -188,6 +190,48 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
     props: [
       { key: 'rarity', label: 'Độ hiếm', hint: 'common | rare | epic | legendary' },
       { key: 'source', label: 'Nhận từ', hint: 'wave | boss | shop | daily' },
+    ],
+  },
+  terrain: {
+    type: 'terrain',
+    label: 'Địa hình',
+    folder: 'terrains',
+    icon: '🟩',
+    hasCost: false,
+    hasRewards: false,
+    note: 'Mỗi loại địa hình là 1 ô vuông trên bản đồ. Mỗi “cấp” ở đây là một biến thể ảnh (cỏ 1, cỏ 2…) để bản đồ không bị lặp; game chọn ngẫu nhiên giữa các biến thể.',
+    stats: [
+      { key: 'moveCost', label: 'Độ khó di chuyển', hint: '1 = bình thường, 2 = chậm gấp đôi' },
+      { key: 'spawnWeight', label: 'Tỉ lệ xuất hiện khi sinh bản đồ' },
+    ],
+    props: [
+      { key: 'walkable', label: 'Đi được', hint: 'true | false' },
+      { key: 'buildable', label: 'Xây được', hint: 'true | false' },
+      { key: 'layer', label: 'Lớp', hint: 'ground | water | road' },
+      { key: 'color', label: 'Màu đại diện', hint: '#6cc24a' },
+    ],
+  },
+  decoration: {
+    type: 'decoration',
+    label: 'Cây & vật trang trí',
+    folder: 'decorations',
+    icon: '🌲',
+    hasCost: false,
+    hasRewards: false,
+    note: 'Cây, đá, bụi, hàng rào, vật thể trên bản đồ. Mỗi “cấp” là một biến thể hoặc giai đoạn (cây non → cây lớn). Vật cản có thể chặt / phá để lấy tài nguyên.',
+    stats: [
+      { key: 'hp', label: 'Độ bền (khi chặt / phá)' },
+      { key: 'clearTimeSec', label: 'Thời gian dọn (giây)' },
+      { key: 'dropAmount', label: 'Lượng tài nguyên rơi ra' },
+      { key: 'spawnWeight', label: 'Tỉ lệ xuất hiện khi sinh bản đồ' },
+    ],
+    props: [
+      { key: 'category', label: 'Nhóm', hint: 'tree | rock | bush | flower | fence | prop' },
+      { key: 'size', label: 'Kích thước (ô)' },
+      { key: 'blocking', label: 'Chặn đường', hint: 'true | false' },
+      { key: 'clearable', label: 'Dọn được', hint: 'true | false' },
+      { key: 'drops', label: 'Tài nguyên rơi ra', hint: 'key tài nguyên, ví dụ wood' },
+      { key: 'placeOn', label: 'Đặt trên địa hình', hint: 'grass, sand…' },
     ],
   },
 };

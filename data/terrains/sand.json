@@ -1,0 +1,35 @@
+{
+  "key": "sand",
+  "type": "terrain",
+  "name": "Cát",
+  "description": "Bãi cát, đi chậm.",
+  "artSubject": "warm golden sand",
+  "props": {
+    "walkable": true,
+    "buildable": true,
+    "layer": "ground",
+    "color": "#ecd58f"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "moveCost": 1.3,
+        "spawnWeight": 70
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "smooth sand with soft ripples"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "moveCost": 1.3,
+        "spawnWeight": 30
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "sand with a small seashell and pebbles"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "key": "bush",
+  "type": "decoration",
+  "name": "Bụi cây",
+  "description": "Bụi cây nhỏ, không chặn đường.",
+  "artSubject": "a round green leafy bush",
+  "props": {
+    "category": "bush",
+    "size": 1,
+    "blocking": false,
+    "clearable": true,
+    "drops": "wood",
+    "placeOn": "grass"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "hp": 10,
+        "clearTimeSec": 3,
+        "dropAmount": 5,
+        "spawnWeight": 60
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "small bush"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "hp": 15,
+        "clearTimeSec": 5,
+        "dropAmount": 10,
+        "spawnWeight": 40
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "bush with red berries"
+    }
+  ]
+}

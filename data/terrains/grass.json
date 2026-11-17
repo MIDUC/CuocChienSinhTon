@@ -1,0 +1,45 @@
+{
+  "key": "grass",
+  "type": "terrain",
+  "name": "Cỏ",
+  "description": "Ô cỏ cơ bản, đi và xây được.",
+  "artSubject": "lush bright green grass",
+  "props": {
+    "walkable": true,
+    "buildable": true,
+    "layer": "ground",
+    "color": "#6cc24a"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "moveCost": 1,
+        "spawnWeight": 60
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "plain short grass"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "moveCost": 1,
+        "spawnWeight": 25
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "grass with a few tiny white flowers"
+    },
+    {
+      "level": 3,
+      "stats": {
+        "moveCost": 1,
+        "spawnWeight": 15
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "grass with small pebbles and clover patches"
+    }
+  ]
+}

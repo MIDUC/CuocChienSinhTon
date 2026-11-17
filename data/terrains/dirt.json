@@ -1,0 +1,35 @@
+{
+  "key": "dirt",
+  "type": "terrain",
+  "name": "Đất",
+  "description": "Đất trống, đi được, xây được.",
+  "artSubject": "packed brown dirt",
+  "props": {
+    "walkable": true,
+    "buildable": true,
+    "layer": "ground",
+    "color": "#b5895a"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "moveCost": 1,
+        "spawnWeight": 70
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "smooth dry dirt"
+    },
+    {
+      "level": 2,
+      "stats": {
+        "moveCost": 1,
+        "spawnWeight": 30
+      },
+      "cost": {},
+      "image": null,
+      "artNote": "dirt with small stones and grass tufts at the edges"
+    }
+  ]
+}

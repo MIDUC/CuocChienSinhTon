@@ -72,6 +72,25 @@ export function recommendedSize(e: EntityData, style: ArtStyle): SizeSpec {
         height: 256,
         note: 'Biểu tượng tài nguyên dùng trên thanh tài nguyên và phần thưởng. PNG nền trong suốt, vật thể chiếm ~80% khung.',
       };
+    case 'terrain': {
+      const w = tw * 2;
+      return {
+        width: w,
+        height: w,
+        note:
+          `Một ô địa hình hình thoi (tỉ lệ 2:1) rộng đúng ${w}px, cao ${w / 2}px mặt trên + phần bề dày đất bên dưới; ` +
+          `đặt sát đáy ảnh, phần trống phía trên để trong suốt. Mép ô phải liền mạch để ghép các ô cạnh nhau. Xuất @2x.`,
+      };
+    }
+    case 'decoration': {
+      const n = numProp(e, 'size', 1);
+      const w = tw * 2 * n;
+      return {
+        width: w,
+        height: w,
+        note: `Vật thể đứng trên ${n}×${n} ô, gốc/chân nằm ở 1/4 dưới ảnh, KHÔNG vẽ ô đất bên dưới (game ghép với ô địa hình). PNG nền trong suốt, xuất @2x.`,
+      };
+    }
     case 'chest':
       return {
         width: 384,
@@ -88,6 +107,8 @@ const TYPE_FRAMING: Record<EntityTypeKey, string> = {
   monster: 'a single monster enemy character, full body, menacing but cute stylized proportions',
   resource: 'a game resource icon',
   chest: 'a closed treasure chest game item',
+  terrain: 'a single seamless isometric ground tile (2:1 diamond top face with a thin soil side), tileable edges, nothing standing on it',
+  decoration: 'a single map decoration object standing on the ground, no ground tile under it',
 };
 
 function progression(level: LevelData, max: number) {

@@ -424,6 +424,9 @@ export function normalizeEntity(raw: any, forcedType?: EntityTypeKey): EntityDat
     if (typeof v === 'number' || typeof v === 'boolean' || typeof v === 'string') props[k] = v;
   }
 
+  // Cổng chỉ cho lính ta đi qua: quái không bao giờ đi qua cổng (phải phá hoặc tìm lối khác)
+  if (type === 'building' && (props.category === 'gate' || props.friendlyPassable === true)) props.enemyPassable = false;
+
   return {
     key,
     type: type as EntityTypeKey,

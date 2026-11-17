@@ -27,10 +27,13 @@ export default function FootprintPanel({
   const flag = (k: string, def: boolean) => (draft.props[k] === undefined ? def : draft.props[k] === true);
   const blocks = flag('blocksPath', true);
   const friendly = flag('friendlyPassable', false);
-  const enemy = flag('enemyPassable', false);
+  // Cổng: chỉ lính ta đi qua, quái không bao giờ đi qua được
+  const isGate = draft.props.category === 'gate' || flag('friendlyPassable', false);
+  const enemy = !isGate && flag('enemyPassable', false);
   const standable = flag('standable', false);
   const set = (patch: EntityData['props']) => {
     const next = { ...draft.props, ...patch };
+    if (next.category === 'gate' || next.friendlyPassable === true) next.enemyPassable = false;
     delete next.size; // dùng footprintW/H thay cho size
     setProps(next);
   };
@@ -89,8 +92,8 @@ export default function FootprintPanel({
               Lính ta đi qua được (cổng)
             </label>
             <label className="check">
-              <input type="checkbox" checked={enemy} disabled={!blocks} onChange={(e) => set({ enemyPassable: e.target.checked })} />
-              Quái đi qua được
+              <input type="checkbox" checked={enemy} disabled={!blocks || isGate} onChange={(e) => set({ enemyPassable: e.target.checked })} />
+              {isGate ? 'Quái không đi qua được (cổng chỉ cho lính ta)' : 'Quái đi qua được'}
             </label>
             <label className="check">
               <input type="checkbox" checked={standable} onChange={(e) => set({ standable: e.target.checked })} />

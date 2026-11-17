@@ -24,6 +24,18 @@ Lối chơi:
 - Kinh tế: mỏ/nông trại/xưởng gỗ sản xuất, bấm để thu hoạch; Nhà kho + Thành chính tăng sức chứa; bấm cây/đá để dọn lấy tài nguyên.
 - Kho báu: mua/nâng cấp cổ vật, trang bị và gắn vào ô của nhà lính (ô cổ vật mở theo cấp nhà). Điểm cộng phân vào chỉ số.
 
+Tính năng thêm (mặc định do Claude chọn, có thể chỉnh):
+- **Độ khó** khi lập thành mới: Dễ / Thường / Khó (máu, sát thương quái và tài nguyên khởi đầu).
+- **Phép** trong trận (góc dưới phải, phím Q W E F): Mưa thiên thạch (ngọc), Băng giá (gỗ), Hồi sinh lực (lương thực), Xung phong (vàng) — có thời gian hồi.
+- **Quái tinh anh** (ánh vàng, từ đợt 3): máu ×2.5, rơi ×3 vàng và ngọc.
+- **Biến cố đợt** (từ đợt 4): Trăng máu, Giáp sắt, Bầy đàn, Cuồng phong, Đêm đen — xem trước ở thanh trên.
+- **Xem trước đợt tới**: thành phần quái, cấp, cổng nào sẽ mở (cổng chưa mở bị mờ).
+- **Nhiệm vụ & thành tựu** 📜 với phần thưởng tài nguyên, ngọc, rương.
+- **Thương nhân lữ hành** ghé ngẫu nhiên giữa các đợt: đổi tài nguyên, mua ngọc, lính dự bị.
+- **Thành chính tự bắn tên** khi trên admin chưa có chỉ số `damage` cho thành.
+- Di chuyển công trình, nâng cấp tất cả công trình cùng loại, sửa tất cả, bấm vào quái/lính để xem chỉ số.
+- Sản xuất & mở rương khi vắng mặt (tối đa 8 giờ), âm thanh tổng hợp (tắt/bật 🔊), tạm dừng khi mở hộp thoại.
+
 Các hệ số rút ngắn thời gian (xây, tạo lính, mở rương…) ở `game/src/state.ts` (`CFG`).
 Bản build: `npm run build` → server phục vụ game tại `http://localhost:3000/game/`.
 

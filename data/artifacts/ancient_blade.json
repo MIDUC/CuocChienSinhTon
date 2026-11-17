@@ -21,7 +21,23 @@
         "gem": 0
       },
       "image": null,
-      "artNote": "dull worn bronze"
+      "artNote": "dull worn bronze",
+      "effects": [
+        {
+          "type": "crit",
+          "value": 50,
+          "chance": 0.05,
+          "durationSec": 0,
+          "radius": 0
+        },
+        {
+          "type": "armorBreak",
+          "value": 2,
+          "chance": 0.2,
+          "durationSec": 3,
+          "radius": 0
+        }
+      ]
     },
     {
       "level": 2,
@@ -34,7 +50,23 @@
         "gem": 10
       },
       "image": null,
-      "artNote": "polished silver with a small glowing gem"
+      "artNote": "polished silver with a small glowing gem",
+      "effects": [
+        {
+          "type": "crit",
+          "value": 50,
+          "chance": 0.1,
+          "durationSec": 0,
+          "radius": 0
+        },
+        {
+          "type": "armorBreak",
+          "value": 4,
+          "chance": 0.2,
+          "durationSec": 3,
+          "radius": 0
+        }
+      ]
     },
     {
       "level": 3,
@@ -47,7 +79,23 @@
         "gem": 15
       },
       "image": null,
-      "artNote": "radiant gold with a large glowing gem and floating runes"
+      "artNote": "radiant gold with a large glowing gem and floating runes",
+      "effects": [
+        {
+          "type": "crit",
+          "value": 50,
+          "chance": 0.15000000000000002,
+          "durationSec": 0,
+          "radius": 0
+        },
+        {
+          "type": "armorBreak",
+          "value": 6,
+          "chance": 0.2,
+          "durationSec": 3,
+          "radius": 0
+        }
+      ]
     }
   ]
 }

@@ -91,6 +91,7 @@ export function recommendedSize(e: EntityData, style: ArtStyle): SizeSpec {
         note: `Vật thể đứng trên ${n}×${n} ô, gốc/chân nằm ở 1/4 dưới ảnh, KHÔNG vẽ ô đất bên dưới (game ghép với ô địa hình). PNG nền trong suốt, xuất @2x.`,
       };
     }
+    case 'equipment':
     case 'artifact':
       return {
         width: 256,
@@ -114,6 +115,7 @@ const TYPE_FRAMING: Record<EntityTypeKey, string> = {
   resource: 'a game resource icon',
   chest: 'a closed treasure chest game item',
   terrain: 'a single seamless isometric ground tile (2:1 diamond top face with a thin soil side), tileable edges, nothing standing on it',
+  equipment: 'a single fantasy RPG equipment item icon ({slot}), slightly tilted in isometric view',
   artifact: 'a single magical ancient artifact item icon, slightly tilted in isometric view, with a soft magical glow',
   decoration: 'a single map decoration object standing on the ground, no ground tile under it',
 };
@@ -140,7 +142,7 @@ export function buildPrompts(e: EntityData, style: ArtStyle): LevelPrompt[] {
   const size = recommendedSize(e, style);
   const max = e.levels.length;
   const n = numProp(e, 'size', 1);
-  const framing = TYPE_FRAMING[e.type].replace('{size}', `${n}x${n}`);
+  const framing = TYPE_FRAMING[e.type].replace('{size}', `${n}x${n}`).replace('{slot}', String(e.props.slot ?? 'item'));
   const subject = e.artSubject.trim() || e.name;
 
   return e.levels.map((lv) => {

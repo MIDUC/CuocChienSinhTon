@@ -224,6 +224,34 @@ function artifact(e: EntityData, level: number, max: number) {
   return g;
 }
 
+function equipment(e: EntityData, level: number, max: number) {
+  const t = max > 1 ? (level - 1) / (max - 1) : 0;
+  const rarityHue: Record<string, number> = { common: 30, rare: 210, epic: 280, legendary: 45 };
+  const hue = rarityHue[String(e.props.rarity)] ?? hash(e.key) % 360;
+  const metal = hsl(210, 10, 70 + t * 10);
+  const gem = hsl(hue, 80, 60);
+  const cx = 128;
+  let g = `<circle cx="${cx}" cy="128" r="${80 + t * 15}" fill="${hsl(hue, 90, 65)}" opacity="${0.12 + t * 0.2}"/>`;
+  switch (String(e.props.slot)) {
+    case 'weapon':
+      g += `<g transform="rotate(-35 128 128)"><rect x="118" y="40" width="20" height="120" rx="4" fill="${metal}" stroke="#555" stroke-width="3"/>`;
+      g += `<rect x="92" y="156" width="72" height="14" rx="6" fill="${hsl(40, 60, 45)}"/><rect x="120" y="170" width="16" height="40" fill="#6d4c41"/><circle cx="128" cy="214" r="9" fill="${gem}"/></g>`;
+      break;
+    case 'helmet':
+      g += `<path d="M64 160 Q64 70 128 66 Q192 70 192 160 Z" fill="${metal}" stroke="#555" stroke-width="4"/><rect x="60" y="150" width="136" height="20" rx="6" fill="${hsl(40, 60, 45)}"/><circle cx="128" cy="100" r="12" fill="${gem}"/>`;
+      break;
+    case 'boots':
+      g += `<path d="M80 60 L120 60 L120 170 L170 170 Q190 172 190 196 L80 196 Z" fill="${hsl(25, 45, 40)}" stroke="#3e2723" stroke-width="4"/><rect x="78" y="60" width="44" height="18" fill="${metal}"/><circle cx="100" cy="120" r="8" fill="${gem}"/>`;
+      break;
+    case 'ring':
+      g += `<ellipse cx="128" cy="150" rx="56" ry="44" fill="none" stroke="${hsl(45, 75, 55)}" stroke-width="16"/><polygon points="${pts([[128, 70], [154, 100], [128, 124], [102, 100]])}" fill="${gem}" stroke="#fff" stroke-width="3"/>`;
+      break;
+    default:
+      g += `<path d="M128 44 L196 72 Q196 160 128 212 Q60 160 60 72 Z" fill="${metal}" stroke="#555" stroke-width="5"/><path d="M128 70 L172 88 Q170 150 128 186 Q86 150 84 88 Z" fill="${hsl(hue, 55, 45)}"/><circle cx="128" cy="124" r="14" fill="${gem}"/>`;
+  }
+  return g;
+}
+
 export function placeholderSvg(e: EntityData, level: number): string {
   const max = Math.max(1, e.levels.length);
   const lv = Math.max(1, Math.min(level, max));
@@ -251,6 +279,9 @@ export function placeholderSvg(e: EntityData, level: number): string {
       break;
     case 'artifact':
       body = artifact(e, lv, max);
+      break;
+    case 'equipment':
+      body = equipment(e, lv, max);
       break;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">

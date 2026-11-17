@@ -1,0 +1,82 @@
+{
+  "key": "commander_ring",
+  "type": "equipment",
+  "name": "Nhẫn Thống Lĩnh",
+  "description": "Tăng hào quang tướng, giảm hồi chiêu.",
+  "artSubject": "a golden signet ring with a royal crest",
+  "props": {
+    "slot": "ring",
+    "equipFor": "general",
+    "role": "all",
+    "rarity": "epic",
+    "setName": ""
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "auraBonusPct": 5,
+        "skillCooldownPct": 4
+      },
+      "cost": {
+        "gold": 300,
+        "stone": 100
+      },
+      "image": null,
+      "artNote": "iron, simple and worn",
+      "effects": [
+        {
+          "type": "buffAura",
+          "value": 5,
+          "chance": 1,
+          "durationSec": 0,
+          "radius": 3
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "stats": {
+        "auraBonusPct": 10,
+        "skillCooldownPct": 8
+      },
+      "cost": {
+        "gold": 1200,
+        "stone": 400
+      },
+      "image": null,
+      "artNote": "steel with silver engravings and a small gem",
+      "effects": [
+        {
+          "type": "buffAura",
+          "value": 10,
+          "chance": 1,
+          "durationSec": 0,
+          "radius": 3
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "stats": {
+        "auraBonusPct": 15,
+        "skillCooldownPct": 12
+      },
+      "cost": {
+        "gold": 2700,
+        "stone": 900
+      },
+      "image": null,
+      "artNote": "golden with glowing runes and a large gem",
+      "effects": [
+        {
+          "type": "buffAura",
+          "value": 15,
+          "chance": 1,
+          "durationSec": 0,
+          "radius": 3
+        }
+      ]
+    }
+  ]
+}

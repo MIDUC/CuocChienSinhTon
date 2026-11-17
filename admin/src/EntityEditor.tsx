@@ -3,6 +3,7 @@ import { api } from './api';
 import { go } from './App';
 import { copyText, toast } from './toast';
 import GarrisonPanel, { GARRISON_PROPS } from './GarrisonPanel';
+import EffectsEditor from './EffectsEditor';
 import type { EntityData, EntitySummary, EntityView, FieldDef, LevelData, LevelPrompt, Meta, Reward, TypeDef } from './types';
 
 interface Props {
@@ -137,6 +138,7 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
         image: null,
         artNote: '',
         ...(typeDef.hasRewards ? { rewards: (last?.rewards ?? []).map((r) => ({ ...r })) } : {}),
+        ...(typeDef.hasEffects ? { effects: (last?.effects ?? []).map((e) => ({ ...e })) } : {}),
       },
     ]);
   };
@@ -247,6 +249,7 @@ export default function EntityEditor({ id, typeDef, meta, all, onChanged }: Prop
           />
         )}
         {typeDef.hasRewards && <RewardsEditor levels={draft.levels} all={all} onChange={setLevels} />}
+        {typeDef.hasEffects && <EffectsEditor levels={draft.levels} effectTypes={meta.effects} onChange={setLevels} />}
       </section>
 
       {hasGarrison && (

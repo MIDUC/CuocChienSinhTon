@@ -1,0 +1,82 @@
+{
+  "key": "flame_sword",
+  "type": "equipment",
+  "name": "Hoả Kiếm",
+  "description": "Vũ khí cho tướng cận chiến, đánh kèm lửa.",
+  "artSubject": "a broad sword wreathed in flames",
+  "props": {
+    "slot": "weapon",
+    "equipFor": "general",
+    "role": "melee",
+    "rarity": "epic",
+    "setName": "Hoả Long"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "damage": 15,
+        "damagePct": 5
+      },
+      "cost": {
+        "gold": 300,
+        "stone": 100
+      },
+      "image": null,
+      "artNote": "iron, simple and worn",
+      "effects": [
+        {
+          "type": "burn",
+          "value": 8,
+          "chance": 0.3,
+          "durationSec": 3,
+          "radius": 0
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "stats": {
+        "damage": 30,
+        "damagePct": 10
+      },
+      "cost": {
+        "gold": 1200,
+        "stone": 400
+      },
+      "image": null,
+      "artNote": "steel with silver engravings and a small gem",
+      "effects": [
+        {
+          "type": "burn",
+          "value": 16,
+          "chance": 0.3,
+          "durationSec": 3,
+          "radius": 0
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "stats": {
+        "damage": 45,
+        "damagePct": 15
+      },
+      "cost": {
+        "gold": 2700,
+        "stone": 900
+      },
+      "image": null,
+      "artNote": "golden with glowing runes and a large gem",
+      "effects": [
+        {
+          "type": "burn",
+          "value": 24,
+          "chance": 0.3,
+          "durationSec": 3,
+          "radius": 0
+        }
+      ]
+    }
+  ]
+}

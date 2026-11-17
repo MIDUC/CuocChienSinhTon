@@ -1,0 +1,82 @@
+{
+  "key": "frost_bow",
+  "type": "equipment",
+  "name": "Băng Cung",
+  "description": "Cung băng làm chậm quái.",
+  "artSubject": "an elegant longbow made of blue ice crystal",
+  "props": {
+    "slot": "weapon",
+    "equipFor": "both",
+    "role": "ranged",
+    "rarity": "rare",
+    "setName": ""
+  },
+  "levels": [
+    {
+      "level": 1,
+      "stats": {
+        "damage": 10,
+        "attackRange": 0.5
+      },
+      "cost": {
+        "gold": 300,
+        "stone": 100
+      },
+      "image": null,
+      "artNote": "iron, simple and worn",
+      "effects": [
+        {
+          "type": "slow",
+          "value": 25,
+          "chance": 0.35,
+          "durationSec": 2,
+          "radius": 0
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "stats": {
+        "damage": 20,
+        "attackRange": 0.5
+      },
+      "cost": {
+        "gold": 1200,
+        "stone": 400
+      },
+      "image": null,
+      "artNote": "steel with silver engravings and a small gem",
+      "effects": [
+        {
+          "type": "slow",
+          "value": 30,
+          "chance": 0.35,
+          "durationSec": 2,
+          "radius": 0
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "stats": {
+        "damage": 30,
+        "attackRange": 0.5
+      },
+      "cost": {
+        "gold": 2700,
+        "stone": 900
+      },
+      "image": null,
+      "artNote": "golden with glowing runes and a large gem",
+      "effects": [
+        {
+          "type": "slow",
+          "value": 35,
+          "chance": 0.35,
+          "durationSec": 2,
+          "radius": 0
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@
  * Đây là nguồn duy nhất: trang admin đọc thông tin này qua GET /api/meta.
  */
 
-export const ENTITY_TYPES = ['building', 'troop', 'general', 'monster', 'resource', 'chest', 'terrain', 'decoration', 'artifact'] as const;
+export const ENTITY_TYPES = ['building', 'troop', 'general', 'monster', 'resource', 'chest', 'terrain', 'decoration', 'artifact', 'equipment'] as const;
 export type EntityTypeKey = (typeof ENTITY_TYPES)[number];
 
 /** Một phần thưởng trong rương. item dạng "resource:gold", "troop:swordsman", "general:tran_hung", "chest:wooden_chest" */
@@ -27,11 +27,58 @@ export interface LevelData {
   troopStats?: Record<string, number>;
   /** Chi phí tạo lại 1 lính ở cấp nhà này (lính chết là mất, không tự hồi sinh), theo key tài nguyên */
   trainCost?: Record<string, number>;
+  /** Công dụng đặc biệt ở cấp này (cổ vật, trang bị) */
+  effects?: Effect[];
   /** Đường dẫn ảnh đã upload (ví dụ /assets/building/barracks/lv1-1700000000.png). null = dùng ảnh placeholder */
   image: string | null;
   /** Mô tả ngoại hình riêng của cấp này (tiếng Anh) để ghép vào prompt vẽ ảnh */
   artNote: string;
 }
+
+/** Một công dụng đặc biệt, ví dụ { type: 'lifesteal', value: 10 } = hút 10% sát thương thành máu */
+export interface Effect {
+  type: string;
+  /** Độ mạnh, đơn vị tuỳ công dụng (xem EFFECT_TYPES) */
+  value: number;
+  /** Tỉ lệ kích hoạt 0..1 (1 = luôn luôn) */
+  chance: number;
+  /** Thời gian hiệu lực (giây), 0 = tức thì / vĩnh viễn */
+  durationSec: number;
+  /** Bán kính (ô), 0 = chỉ 1 mục tiêu */
+  radius: number;
+  /** Ghi chú tự do */
+  note?: string;
+}
+
+export interface EffectTypeDef {
+  type: string;
+  label: string;
+  /** Đơn vị của value */
+  unit: string;
+  /** Trường nào có ý nghĩa với công dụng này */
+  uses: ('chance' | 'durationSec' | 'radius')[];
+  desc: string;
+}
+
+export const EFFECT_TYPES: EffectTypeDef[] = [
+  { type: 'lifesteal', label: 'Hút máu', unit: '% sát thương', uses: [], desc: 'Hồi máu bằng một phần sát thương gây ra' },
+  { type: 'crit', label: 'Chí mạng', unit: '% sát thương thêm', uses: ['chance'], desc: 'Có tỉ lệ gây thêm sát thương' },
+  { type: 'splash', label: 'Sát thương lan', unit: '% sát thương', uses: ['radius'], desc: 'Gây sát thương cho quái xung quanh mục tiêu' },
+  { type: 'slow', label: 'Làm chậm', unit: '% tốc độ', uses: ['chance', 'durationSec'], desc: 'Giảm tốc độ chạy của quái' },
+  { type: 'stun', label: 'Gây choáng', unit: '', uses: ['chance', 'durationSec'], desc: 'Quái đứng yên không đánh được' },
+  { type: 'burn', label: 'Thiêu đốt', unit: 'sát thương / giây', uses: ['chance', 'durationSec'], desc: 'Gây sát thương theo thời gian' },
+  { type: 'poison', label: 'Độc', unit: 'sát thương / giây', uses: ['chance', 'durationSec'], desc: 'Gây sát thương theo thời gian, giảm hồi máu' },
+  { type: 'knockback', label: 'Đẩy lùi', unit: 'ô', uses: ['chance'], desc: 'Đẩy quái lùi lại' },
+  { type: 'armorBreak', label: 'Phá giáp', unit: 'giáp', uses: ['chance', 'durationSec'], desc: 'Giảm giáp của quái' },
+  { type: 'thorns', label: 'Phản đòn', unit: '% sát thương nhận', uses: [], desc: 'Trả lại một phần sát thương cho kẻ đánh' },
+  { type: 'shield', label: 'Khiên chắn', unit: 'máu ảo', uses: ['durationSec'], desc: 'Tạo khiên hấp thụ sát thương khi bắt đầu trận' },
+  { type: 'regen', label: 'Hồi máu', unit: 'máu / giây', uses: [], desc: 'Tự hồi máu liên tục' },
+  { type: 'healAura', label: 'Hào quang hồi máu', unit: 'máu / giây', uses: ['radius'], desc: 'Hồi máu cho lính đồng minh xung quanh' },
+  { type: 'buffAura', label: 'Hào quang tăng sát thương', unit: '% sát thương', uses: ['radius'], desc: 'Tăng sát thương cho lính đồng minh xung quanh' },
+  { type: 'dodge', label: 'Né đòn', unit: '% tỉ lệ', uses: [], desc: 'Có tỉ lệ né hoàn toàn đòn đánh' },
+  { type: 'revive', label: 'Hồi sinh 1 lần', unit: '% máu', uses: ['chance'], desc: 'Khi chết có tỉ lệ sống lại với % máu (1 lần mỗi trận)' },
+  { type: 'goldBonus', label: 'Thêm vàng khi hạ quái', unit: '%', uses: [], desc: 'Tăng vàng rơi ra từ quái bị hạ' },
+];
 
 export interface EntityData {
   key: string;
@@ -65,6 +112,8 @@ export interface TypeDef {
   hasCost: boolean;
   /** Có danh sách phần thưởng không (rương) */
   hasRewards: boolean;
+  /** Có công dụng đặc biệt theo cấp không (cổ vật, trang bị) */
+  hasEffects?: boolean;
   /** Ghi chú hiển thị trên trang danh sách */
   note?: string;
 }
@@ -152,6 +201,7 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
     props: [
       { key: 'role', label: 'Vai trò' },
       { key: 'skill', label: 'Tên chiêu thức' },
+      { key: 'equipSlots', label: 'Vị trí trang bị', hint: 'weapon,armor,helmet,boots,ring' },
       { key: 'size', label: 'Kích thước (ô)' },
     ],
   },
@@ -259,6 +309,7 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
     icon: '🏺',
     hasCost: true,
     hasRewards: false,
+    hasEffects: true,
     note: 'Cổ vật trang bị vào ô cổ vật của nhà lính để tăng chỉ số cho lính của nhà đó. Chỉ số ở đây là phần CỘNG THÊM: số thường = cộng thẳng, đuôi Pct = cộng theo %. Chi phí theo cấp = chi phí nâng cổ vật lên cấp đó.',
     stats: [
       { key: 'hp', label: 'Máu +' },
@@ -276,6 +327,35 @@ export const TYPE_DEFS: Record<EntityTypeKey, TypeDef> = {
       { key: 'rarity', label: 'Độ hiếm', hint: 'common | rare | epic | legendary' },
       { key: 'appliesTo', label: 'Áp dụng cho', hint: 'all | melee | ranged | tank | hoặc key lính, ví dụ archer' },
       { key: 'unique', label: 'Chỉ trang bị 1 cái mỗi nhà', hint: 'true | false' },
+    ],
+  },
+  equipment: {
+    type: 'equipment',
+    label: 'Trang bị',
+    folder: 'equipments',
+    icon: '🛡️',
+    hasCost: true,
+    hasRewards: false,
+    hasEffects: true,
+    note: 'Trang bị mặc cho tướng (và lính nếu cho phép), mỗi món chiếm 1 vị trí: vũ khí, giáp, mũ, giày, nhẫn. Chỉ số = phần cộng thêm (đuôi Pct = %). Cấp = cấp cường hoá của món đồ, chi phí theo cấp = chi phí cường hoá.',
+    stats: [
+      { key: 'hp', label: 'Máu +' },
+      { key: 'hpPct', label: 'Máu +%' },
+      { key: 'damage', label: 'Sát thương +' },
+      { key: 'damagePct', label: 'Sát thương +%' },
+      { key: 'armor', label: 'Giáp +' },
+      { key: 'attackSpeedPct', label: 'Tốc độ đánh +%' },
+      { key: 'moveSpeedPct', label: 'Tốc độ chạy +%' },
+      { key: 'attackRange', label: 'Tầm đánh + (ô)' },
+      { key: 'skillCooldownPct', label: 'Giảm hồi chiêu %' },
+      { key: 'auraBonusPct', label: 'Tăng hào quang tướng %' },
+    ],
+    props: [
+      { key: 'slot', label: 'Vị trí', hint: 'weapon | armor | helmet | boots | ring' },
+      { key: 'equipFor', label: 'Dành cho', hint: 'general | troop | both' },
+      { key: 'role', label: 'Chỉ cho vai trò', hint: 'all | melee | ranged | tank' },
+      { key: 'rarity', label: 'Độ hiếm', hint: 'common | rare | epic | legendary' },
+      { key: 'setName', label: 'Thuộc bộ', hint: 'tên bộ trang bị (nếu có)' },
     ],
   },
 };
@@ -314,6 +394,18 @@ export function normalizeEntity(raw: any, forcedType?: EntityTypeKey): EntityDat
       };
       if (l?.troopStats && typeof l.troopStats === 'object') lv.troopStats = numMap(l.troopStats);
       if (l?.trainCost && typeof l.trainCost === 'object') lv.trainCost = numMap(l.trainCost);
+      if (TYPE_DEFS[type as EntityTypeKey].hasEffects) {
+        lv.effects = (Array.isArray(l?.effects) ? l.effects : [])
+          .filter((x: any) => x && x.type)
+          .map((x: any) => ({
+            type: String(x.type),
+            value: Number(x.value) || 0,
+            chance: Math.min(1, Math.max(0, Number(x.chance ?? 1))),
+            durationSec: Number(x.durationSec) || 0,
+            radius: Number(x.radius) || 0,
+            ...(x.note ? { note: String(x.note) } : {}),
+          }));
+      }
       if (TYPE_DEFS[type as EntityTypeKey].hasRewards) {
         lv.rewards = (Array.isArray(l?.rewards) ? l.rewards : []).map((r: any) => ({
           item: String(r?.item ?? ''),

@@ -50,6 +50,10 @@ export class EntitiesService {
         key: d.key,
         name: d.name,
         levelCount: d.levels.length,
+        description: d.description,
+        props: d.props,
+        /** Cấp cao nhất — dùng cho bảng tổng quan */
+        top: d.levels[d.levels.length - 1] ? { stats: d.levels[d.levels.length - 1].stats, effects: d.levels[d.levels.length - 1].effects ?? [] } : null,
         image: d.levels[0]?.image ?? null,
         placeholder: `/api/art/placeholder/${d.type}/${d.key}/1.svg?v=${r.updatedAt.getTime()}`,
         updatedAt: r.updatedAt,

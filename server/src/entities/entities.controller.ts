@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminGuard } from '../common/admin.guard';
-import { ENTITY_TYPES, TYPE_DEFS } from './definitions';
+import { EFFECT_TYPES, ENTITY_TYPES, TYPE_DEFS } from './definitions';
 import { EntitiesService } from './entities.service';
 
 @Controller('api')
@@ -13,7 +13,7 @@ export class EntitiesController {
   /** Thông tin các loại dữ liệu (nhãn, chỉ số gợi ý...) cho trang admin */
   @Get('meta')
   meta() {
-    return { types: ENTITY_TYPES.map((t) => TYPE_DEFS[t]), authRequired: !!process.env.ADMIN_TOKEN };
+    return { types: ENTITY_TYPES.map((t) => TYPE_DEFS[t]), effects: EFFECT_TYPES, authRequired: !!process.env.ADMIN_TOKEN };
   }
 
   /** Toàn bộ dữ liệu game, gom theo loại — game client đọc API này */
